@@ -1,0 +1,3 @@
+ERROR: configuration file "rep1.cfg", line 2: expected "host" or "port" in replica statement, got "part"
+ERROR: configuration file "rep1.cfg", line 3: expected "host" or "port" in replica statement, got "hyst"
+ERROR: configuration file "rep1.cfg", line 4: expected "host" or "port" in replica statement, got "schnozzledeboop"

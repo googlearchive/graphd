@@ -1,0 +1,2 @@
+error SEMANTICS "on line 1, column 8: 'duck': invalid constraint"
+error SEMANTICS "on line 1, column 8: 'quack': invalid constraint"

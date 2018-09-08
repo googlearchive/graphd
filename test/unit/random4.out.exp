@@ -1,0 +1,9 @@
+ok (00000012400034568000000000000009)
+error SEMANTICS "on line 1, column 17: 'right': duplicate linkage declaration"
+error SEMANTICS "on line 1, column 16: 'left': duplicate linkage declaration"
+error SEMANTICS "on line 1, column 20: 'typeguid': duplicate linkage declaration"
+error SEMANTICS "on line 1, column 17: 'scope': duplicate linkage declaration"
+error SEMANTICS "on line 1, column 18: 'right': duplicate linkage declaration"
+error SEMANTICS "on line 1, column 17: 'left': duplicate linkage declaration"
+error SEMANTICS "on line 1, column 21: 'typeguid': duplicate linkage declaration"
+error SEMANTICS "on line 1, column 18: 'scope': duplicate linkage declaration"

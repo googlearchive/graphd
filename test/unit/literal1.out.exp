@@ -1,0 +1,6 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+error SYNTAX "on line 1, column 21: ')': missing '=' after 'literal'"
+ok blue
+ok (blue)
+ok ((blue) (blue))

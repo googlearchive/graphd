@@ -1,0 +1,1 @@
+error SEMANTICS "restored records must be contiguous - cannot restore records above 0 (attempted: 6021)"

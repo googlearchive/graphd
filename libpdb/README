@@ -1,0 +1,30 @@
+libpdb.a - primitive database
+
+Layered on top of the "workhorse" libaddb.a, this library's
+goal is to present a user interface to the graphdb server process
+that makes sense of data in terms of "primitives" -- tuples of
+type, name,  valuetype, value, scope, timestamp, etc.
+
+To libaddb, it's all just data.  libpdb knows that bytes 16..31
+of this data are the big-endian GUID of a scope object.
+
+Much of libpdb is really not so much code as _conventions_;
+a lot of it is macros in pdb.h that access certain bytes in certain
+ways.
+
+Services:
+      - read, allocate primitives;
+      - iterate over all primitives in a database
+      - remove a complete database
+
+Tools:
+ 	pdbdump -- dump contents of one pdb database.
+
+Uses:
+	libaddb, libgraph.
+
+Used by:
+	Graph database
+
+Implemented in:
+	C

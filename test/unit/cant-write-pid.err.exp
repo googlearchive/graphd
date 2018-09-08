@@ -1,0 +1,4 @@
+ERROR: graphd: cannot create or open temporary pid-file "cant-write-pid-fneep/kaboodle.pid-NNN": No such file or directory
+Stacktrace: graphd[NNNx4dee54], srv_pidfile_create+140, srv_main+3589
+ERROR: graphd: cannot create or open temporary pid-file "cant-write-pid-fneep/kaboodle.pid-NNN": Permission denied
+Stacktrace: graphd[NNNx4dee54], srv_pidfile_create+140, srv_main+3589

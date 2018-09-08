@@ -1,0 +1,11 @@
+ok dateline="00000012400034568000000000000001" (00000012400034568000000000000000)
+ok dateline="00000012400034568000000000000002" (00000012400034568000000000000001)
+ok id="mand" "find me"
+ok id="mand<3" "find me"
+ok id="mand<2" "find me"
+error EMPTY id="mand<1" "not found"
+error EMPTY id="mand<0" "not found"
+ok id="opt" "find me"
+ok id="opt<2" "find me"
+ok id="opt<1" "find me"
+ok id="opt<0" "find me"

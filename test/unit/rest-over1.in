@@ -1,0 +1,4 @@
+write (value="foo")
+write (value="bar" (<-right  value="foobar" left->(value="foo" key=value)) (<-left value="barfoo" right->(value="foo" key=value)))
+write (value="baz" typeguid->(value="foo" key=value))
+write (name="bazooka" scope->(value="foo" key=value))

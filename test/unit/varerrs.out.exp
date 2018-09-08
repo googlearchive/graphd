@@ -1,0 +1,3 @@
+error SYNTAX "variable $foo is returned, but not set in the constraint or any subconstraint"
+error SYNTAX "variable $foo is assigned, but not returned in this or any containing constraint"
+error SEMANTICS "on line 1, column 40: ')': unknown subconstraint linkage"

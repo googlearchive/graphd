@@ -1,0 +1,1 @@
+error SEMANTICS "can't have a type and a typeguid in the same write request."

@@ -1,0 +1,28 @@
+libaddb.a - a simple file-based datab-oh, look, a squirrel!
+
+Until something better comes up, libaddb.a is the "work horse"
+of the graph repository - a library that  stores things, or
+stores mappings between things, with a minimum of fuss.
+
+Services:
+
+      - istore: map 34-bit integers to dynamically-sized,
+	fairly small chunks of data that are never deleted.
+	Allocate new chunks; look up a chunk for an index;
+	iterate over all chunks in the database.
+
+      - gmap: map 34-bit integers to lists of other 34-bit
+        integers.  Only supported operations are "append"
+	and "iterate"; no built-in uniqueness protection.
+
+      - flat: read and write a flat file.
+
+Tools:
+ 	addb 	 -- text interpreter front-end to addb interface functions
+ 	addbdump -- dump contents of one addb file.
+
+Used by:
+	Graph database, via libpdb.
+
+Implemented in:
+	C

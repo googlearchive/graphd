@@ -1,0 +1,7 @@
+error SEMANTICS "on line 1, column 20: '->': a meta constraint has already been defined"
+error SEMANTICS "duplicate assignment to \"archival\" flag"
+error SEMANTICS "duplicate assignment to \"live\" flag"
+error SYNTAX "more than one value for \"name\""
+error SYNTAX "on line 1, column 14: '5': expected a string or '('"
+error SEMANTICS "more than one valuetype"
+error EMPTY "not found"

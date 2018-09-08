@@ -1,0 +1,3 @@
+ok (00000012400034568000000000000009)
+error SEMANTICS "on line 1, column 11: '~=': operator can only be used with 'value' constraints"
+error SEMANTICS "on line 1, column 11: '~=': operator can only be used with 'value' constraints"

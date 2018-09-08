@@ -1,0 +1,44 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000002)
+ok (00000012400034568000000000000003)
+ok id="typeguid = = b" (("b"))
+error EMPTY id="typeguid = = EMPTY" "not found"
+ok id="typeguid = = null" (("null"))
+ok id="typeguid = = null" (("null"))
+ok id="typeguid = != b" (("b"))
+error EMPTY id="typeguid = != EMPTY" "not found"
+ok id="typeguid = != null" (("null"))
+ok id="typeguid = != a" (("a"))
+ok id="typeguid = ~= b" (("b"))
+error EMPTY id="typeguid = ~= EMPTY" "not found"
+ok id="typeguid = ~= null" (("null"))
+ok id="typeguid = ~= null" (("null"))
+ok id="typeguid = ~= null" (("null"))
+ok id="typeguid = ~= a" (("a"))
+ok id="typeguid != = c" (("c"))
+error EMPTY id="typeguid != = EMPTY" "not found"
+ok id="typeguid != = b" (("b"))
+ok id="typeguid != = abc" (("a") ("b") ("c"))
+ok id="typeguid != != c" (("c"))
+error EMPTY id="typeguid != != EMPTY" "not found"
+ok id="typeguid != != b" (("b"))
+ok id="typeguid != != abc" (("a") ("b") ("c"))
+ok id="typeguid != ~= c" (("c"))
+error EMPTY id="typeguid != ~= EMPTY" "not found"
+ok id="typeguid != ~= b" (("b"))
+ok id="typeguid != ~= abc" (("a") ("b") ("c"))
+ok id="typeguid ~= = b" (("b"))
+error EMPTY id="typeguid ~= = EMPTY" "not found"
+ok id="typeguid ~= = null" (("null"))
+ok id="typeguid ~= = null" (("null"))
+ok id="typeguid ~= != b" (("b"))
+error EMPTY id="typeguid ~= != EMPTY" "not found"
+ok id="typeguid ~= != null" (("null"))
+ok id="typeguid ~= != a" (("a"))
+ok id="typeguid ~= ~= b" (("b"))
+error EMPTY id="typeguid ~= ~= EMPTY" "not found"
+ok id="typeguid ~= ~= null" (("null"))
+ok id="typeguid ~= ~= null" (("null"))
+ok id="typeguid ~= ~= null" (("null"))
+ok id="typeguid ~= ~= a" (("a"))

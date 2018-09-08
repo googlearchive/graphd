@@ -1,0 +1,14 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (("foo" "1") ("FOO" "2"))
+ok (("foo" "1"))
+error EMPTY "not found"
+ok (("FOO" "2"))
+ok (("foo" "1"))
+ok (("foo" "1") ("FOO" "2"))
+error EXISTS "primitive tagged as unique already exist"
+error EXISTS "primitive tagged as unique already exist"
+ok (00000012400034568000000000000002)
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000003)

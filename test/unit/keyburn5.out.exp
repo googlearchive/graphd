@@ -1,0 +1,4 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000001)
+error SYNTAX "cannot mix \"key=\" and \"guid~=\" constraints - did you mean \"unique\"?"

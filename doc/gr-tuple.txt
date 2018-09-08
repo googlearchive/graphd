@@ -1,0 +1,222 @@
+TUPLE SYTNAX
+
+When sending tuples back and forth, they are encoded
+as a space-separated, parenthesized list of values.
+
+This document describes the syntax used for those
+values.
+
+Which value goes where in the tuple is determined by
+the application in the request and outside of the
+scope of this document.
+
+	tuple-component:
+	       guid
+	     / name
+	     / type
+	     / typeguid
+	     / datatype
+	     / valuetype
+	     / value
+	     / left
+	     / right
+	     / live-status
+	     / archival-status
+	     / timestamp
+	     / scope
+
+1. SYNTACTICAL ELEMENTS
+
+1.1 STRINGS
+
+Many of the tuple elements are rendered as strings.
+
+A string is enclosed in double quotes.  (Single quotes have
+no special meaning to graphd.)
+
+	string:	<"> *string-char <">
+
+	string-char:
+		  "\\"
+		/ "\" <">
+		/ "\n"
+		/ "\" <any character other than n>
+		/ <any character other than \ or ">
+
+
+In a string, the following characters are always quoted by
+escaping them with \:
+
+	\ (backslash, ASCII 0x5c)    quoted as \\
+	" (double quote, ASCII 0x22) quoted as \"
+
+The following character is quoted in all strings sent by graphd.
+It can be quoted or written literally in strings sent to graphd:
+
+	\n (newline, ASCII 0x0a)     as \n
+
+(In other words, graphd output does not contain literal \n within  
+strings, but they're acceptable on input.)
+
+In addition,
+
+	\a is read as a for all a other than "n"
+
+on input.
+
+There are no hex or octal escapes.  (\0 evaluates to the
+digit 0, ascii 0x30, not to NUL, ascii 0x00.)
+
+
+1.2 GUIDS
+
+GUIDs are rendered as 32-byte hex strings:
+
+	guid:
+        	32hex
+
+	hex:
+		"0" / "1" / "2" / "3" / "4" / "5" / "6" / "7"
+	      /	"8" / "9" / "a" / "b" / "c" / "d" / "e" / "f"
+
+Graphd always renders GUIDs in lower-case, but accepts them
+case-insensitively.
+
+2. TUPLE COMPONENTS
+
+2.1 GUID
+
+The 128-bit GUID of a primitive, rendered as a 32-byte hex string.
+(See 1.2 for the syntax.)
+
+2.2 NAME
+
+The primitive's name as a quoted string, or the word "null" as an atom,
+to indicate that the primitive had no name.
+
+	name: 	string
+	      / "null"
+
+2.3 TYPE 
+
+In some older notations, a primitive type is rendered as a string.
+In modern notations, it is rendered as a GUID.
+
+2.3.1 TYPE STRING
+
+The name of the primitive's type as a quoted string, or the word
+"null" as an atom, to indicate that the primitive had no type.
+
+	type:
+		string
+	      / "null"
+
+2.3.2 TYPEGUID
+
+The GUID of the primitive's type, or the word "null" (without quotes)
+to indicate that the primitive has no single type.
+
+	typeguid:  guid
+		/ "null"
+
+2.4 DATATYPE
+
+The name of the primitive's datatype as an atom.
+
+	datatype:
+		"string"
+	      / "boolean"
+	      / "integer"
+	      / "float"
+	      / "timestamp"
+	      / "url"
+	      / "guid"
+	      / "bytestring"
+	      / "null"
+
+This is obsolete and replaced by the VALUETYPE, a small
+integer in the range 1..255.
+
+2.5 VALUE
+
+	value:  string
+	      / "null"
+
+The value is rendered as a string.
+No value is rendered as the atom "null" (without the quotes).
+
+
+2.6. LEFT
+
+The guid of the left-hand node of a link, or the word "null"
+(without quotes) if the link has no left-hand node, or if
+we're not talking about a link.
+
+	left:	"null"
+	      / guid
+
+2.7 RIGHT
+
+The guid of the right-hand node of a link, or the word "null"
+(without quotes) if this isn't a link. 
+
+	right:	"null"
+	      / guid
+
+2.8 LIVE-STATUS
+
+The atom "true" or "false" (without the quotes), depending
+on whether this primitive has the "live" flag set or not.
+
+	live-status:
+		boolean
+
+	boolean:
+		"true"
+	      / "false"
+
+2.9 ARCHIVAL-STATUS
+
+The atom "true" or "false" (without the quotes), depending
+on whether this primitive has the "archival" flag set or not.
+
+	archival-status:
+		"true"
+	      / "false"
+
+2.10 TIMESTAMP
+
+The primitive's full timestamp.
+
+On output, the timestamp is rendered with 16bits of sub-second precision.
+On input, shorter timestamps are accepted.
+
+        timestamp:
+             y?yyyy ["-" mm ["-" dd ["T" hh [":" mm [":" ss ["." +n ]]]]]] ["Z"]
+
+The timezone is optional; if it is supplied, it must be "Z",
+standing for UTC.
+
+
+2.11 SCOPE
+
+The 128-bit GUID of a primitive's scope, rendered as a
+32-byte hex string, or the word "null" (without quotes)
+to indicate that the primitive has no scope.
+
+	scope:
+        	32hex
+	      / "null"
+
+2.12 VALUETYPE
+
+A small integer in the range 1..255.  If unspecified, the valuetype
+assigned to primitives with a value is 2; without a value, 1.
+
+	valuetype:	number
+
+Valuetype and datatype (see 2.4) are the same underlying value.  When
+accessed as a datatype, integers in range 1..9 are printed as the name
+of their corresponding datatype; datatypes outside that range are printed
+as numbers. When accessed as a valuetype, all values print as numbers.
+

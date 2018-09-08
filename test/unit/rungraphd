@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+#	sourced by test scripts
+#
+#		B=my_test_name
+#		source rungraphd
+#
+#		rm -rf $D
+#		rungraphd -d${D} -bty <<-'EOF'
+#		...
+#               EOF
+#		rm -rf $D
+#
+#	The variable $B is the base name of the test and must
+#       be set before sourcing rungraphd
+#
+#       After sourcing rungraphd, the variable D is set to the
+#	database name and the function, rungraphd, may be called
+#	to run the appropriate graphd executable.
+#
+
+#eval `make --no-print-directory obj-export`
+rungraphd_mode=${GD_RUN_MODE:-plain}
+D=${TEST_TMPDIR}/$B
+rungraphd_pass=0
+GFLAGS=${GFLAGS-"-voperator-error"}
+
+#
+#	rungraphd( <graphd-options> )
+#   	run graphd
+#
+
+GRAPHD=${TEST_SRCDIR}/graphd/graphd
+
+function rungraphd ()
+{
+	status=0
+	case ${rungraphd_mode} in
+		( trace )
+			strace -o ${B}.${rungraphd_pass}.trace -f -ff ${GRAPHD} ${GFLAGS} -x ${GRAPHD} $*
+			;;
+
+		( time )
+			/usr/bin/time -f "real: %e user: %U sys: %S sig: %k wait: %w fault: %F" -o ${B}.${rungraphd_pass}.time -- ${GRAPHD} ${GFLAGS} -x ${GRAPHD} $*
+			;;
+
+		( coco )
+			${GRAPHD} ${GFLAGS} -x ${GRAPHD} -c .coco $*
+			status=$?
+			;;
+
+		( plain )
+			${GRAPHD} ${GFLAGS} -S -x ${GRAPHD} $*
+			status=$?
+			;;
+		( * )
+			echo "Unrecognized mode: ${rungraphd_mode}"
+			exit 1
+			;;
+	esac
+	if [ -f gmon.out ] ; then
+		mv gmon.out ${B}.${rungraphd_pass}.gmon
+	fi
+	rungraphd_pass=$(( rungraphd_pass + 1))
+	return $status
+}

@@ -1,0 +1,88 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000002)
+ok (00000012400034568000000000000003)
+ok id="guid = = b" (("b"))
+error EMPTY id="guid = = EMPTY" "not found"
+error SEMANTICS id="guid = = SEMANTICS" "on line 2, column 40: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid = = SEMANTICS" "on line 2, column 40: 'null': null GUIDs cannot be used in this context"
+ok id="guid = != b" (("b"))
+error EMPTY id="guid = != EMPTY" "not found"
+error SEMANTICS id="guid = != SEMANTICS" "on line 2, column 40: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid = != SEMANTICS" "on line 2, column 40: 'null': null GUIDs cannot be used in this context"
+ok id="guid = ~= b" (("b"))
+error EMPTY id="guid = ~= EMPTY" "not found"
+error SEMANTICS id="guid = ~= SEMANTICS" "on line 2, column 40: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid = ~= SEMANTICS" "on line 2, column 40: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid = ~= SEMANTICS" "on line 2, column 40: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid = ~= SEMANTICS" "on line 2, column 40: 'null': null GUIDs cannot be used in this context"
+ok id="guid != = c" (("c"))
+error EMPTY id="guid != = EMPTY" "not found"
+error SEMANTICS id="guid != = SEMANTICS" "on line 2, column 41: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid != = SEMANTICS" "on line 1, column 59: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid != != SEMANTICS" "on line 3, column 41: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid != != SEMANTICS" "on line 3, column 8: 'null': null GUIDs cannot be used in this context"
+ok id="guid != != b+null" (("b") (null))
+error SEMANTICS id="guid != != SEMANTICS" "on line 1, column 59: 'null': null GUIDs cannot be used in this context"
+ok id="guid != ~= c" (("c"))
+ok id="guid != ~= b" (("b"))
+error SEMANTICS id="guid != ~= SEMANTICS" "on line 1, column 59: 'null': null GUIDs cannot be used in this context"
+ok id="guid ~= = b" (("b"))
+error EMPTY id="guid ~= = EMPTY" "not found"
+error SEMANTICS id="guid ~= = SEMANTICS" "on line 2, column 41: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid ~= = SEMANTICS" "on line 2, column 41: 'null': null GUIDs cannot be used in this context"
+ok id="guid ~= != b" (("b"))
+error EMPTY id="guid ~= != EMPTY" "not found"
+error SEMANTICS id="guid ~= != SEMANTICS" "on line 2, column 40: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid ~= != SEMANTICS" "on line 2, column 40: 'null': null GUIDs cannot be used in this context"
+ok id="guid ~= ~= b" (("b"))
+error EMPTY id="guid ~= ~= EMPTY" "not found"
+error SEMANTICS id="guid ~= ~= SEMANTICS" "on line 2, column 41: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid ~= ~= SEMANTICS" "on line 2, column 41: 'null': null GUIDs cannot be used in this context"
+error SEMANTICS id="guid ~= ~= SEMANTICS" "on line 2, column 41: 'null': null GUIDs cannot be used in this context"
+ok id="guid ~= ~= a" (("a"))
+ok
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000002)
+ok (00000012400034568000000000000003)
+ok id="typeguid = = b" (("b"))
+error EMPTY id="typeguid = = EMPTY" "not found"
+ok id="typeguid = = null" (("null"))
+ok id="typeguid = = null" (("null"))
+ok id="typeguid = != b" (("b"))
+error EMPTY id="typeguid = != EMPTY" "not found"
+ok id="typeguid = != null" (("null"))
+ok id="typeguid = != a" (("a"))
+ok id="typeguid = ~= b" (("b"))
+error EMPTY id="typeguid = ~= EMPTY" "not found"
+ok id="typeguid = ~= null" (("null"))
+ok id="typeguid = ~= null" (("null"))
+ok id="typeguid = ~= null" (("null"))
+ok id="typeguid = ~= a" (("a"))
+ok id="typeguid != = c" (("c"))
+error EMPTY id="typeguid != = EMPTY" "not found"
+ok id="typeguid != = b" (("b"))
+ok id="typeguid != = abc" (("a") ("b") ("c"))
+ok id="typeguid != != c" (("c"))
+error EMPTY id="typeguid != != EMPTY" "not found"
+ok id="typeguid != != b" (("b"))
+ok id="typeguid != != abc" (("a") ("b") ("c"))
+ok id="typeguid != ~= c" (("c"))
+error EMPTY id="typeguid != ~= EMPTY" "not found"
+ok id="typeguid != ~= b" (("b"))
+ok id="typeguid != ~= abc" (("a") ("b") ("c"))
+ok id="typeguid ~= = b" (("b"))
+error EMPTY id="typeguid ~= = EMPTY" "not found"
+ok id="typeguid ~= = null" (("null"))
+ok id="typeguid ~= = null" (("null"))
+ok id="typeguid ~= != b" (("b"))
+error EMPTY id="typeguid ~= != EMPTY" "not found"
+ok id="typeguid ~= != null" (("null"))
+ok id="typeguid ~= != a" (("a"))
+ok id="typeguid ~= ~= b" (("b"))
+error EMPTY id="typeguid ~= ~= EMPTY" "not found"
+ok id="typeguid ~= ~= null" (("null"))
+ok id="typeguid ~= ~= null" (("null"))
+ok id="typeguid ~= ~= null" (("null"))
+ok id="typeguid ~= ~= a" (("a"))

@@ -1,0 +1,14 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (("2") ("1"))
+ok (("2") ("1"))
+ok (("2") ("1"))
+error SYNTAX "circular assignment of $foo to itself"
+error SYNTAX "circular assignment of $foo to itself"
+error SYNTAX "variable $bar is returned, but not set in the constraint or any subconstraint"
+error SYNTAX "variable $foo is assigned to twice"
+ok ((00000012400034568000000000000001 null null string "1" null true true 1970-01-01T00:00:00.0001Z) (00000012400034568000000000000000 null null string "2" null true true 1970-01-01T00:00:00.0000Z))
+error SYNTAX "cannot sort by nested lists."
+error SEMANTICS "result expression \"(value)\" nests lists more than two levels deep"
+ok (("1") ("2"))
+ok (("2") ("1"))

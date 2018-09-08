@@ -1,0 +1,50 @@
+# Description:
+#   cl is a generalized, but fairly thin, logging interface.
+
+package(default_visibility = ["//visibility:public"])
+
+cc_library(
+    name = "libcl",
+    srcs = [
+        "cl-abort-c.c",
+        "cl-build-version.c",
+        "cl-cover.c",
+        "cl-create.c",
+        "cl-destroy.c",
+        "cl-diary.c",
+        "cl-dup2.c",
+        "cl-file.c",
+        "cl-flush.c",
+        "cl-hard-error.c",
+        "cl-log.c",
+        "cl-log-errno.c",
+        "cl-loglevel.c",
+        "cl-netlog.c",
+        "cl-netlog3.c",
+        "cl-notreached.c",
+        "cl-set-abort.c",
+        "cl-set-coverage.c",
+        "cl-set-hard-error.c",
+        "cl-set-stacktrace.c",
+        "cl-set-strerror.c",
+        "cl-set-write.c",
+        "cl-siphon.c",
+        "cl-stack.c",
+        "cl-strerror.c",
+        "cl-syslog.c",
+        "cl-vlog.c",
+        "cl-wnotreached.c",
+        "cl-write-file.c",
+        "cl-write-netlog.c",
+        "cl-write-netlog3.c",
+        "cl-write-stderr.c",
+        "cl-write-syslog.c",
+        "clp.h",
+    ],
+    hdrs = ["cl.h"],
+    copts = [
+        "$(STACK_FRAME_UNLIMITED)",
+        "-g",
+    ],
+    linkopts = ["-ldl"],
+)

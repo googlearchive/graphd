@@ -1,0 +1,2 @@
+ERROR: graphd: no database path in configuration file "override-dir-1.conf" or command line
+ERROR: graphd: failed to open "hey-this-file-doesnt-exist.conf" as a configuration file: No such file or directory

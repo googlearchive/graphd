@@ -1,0 +1,29 @@
+es -- event server
+
+	This is poll(2) on steroids.
+
+	Poll events -- incoming data, outgoing capacity,
+	errors, timeouts -- are dispatched to handlers.
+	There's one handler per file descriptor.
+	Handlers can subscribe to and unsubscribe
+	from events, and can hook up to at most one
+	timeout per handler.
+
+USES
+	cl for logging, assertions
+	cm for allocation
+
+USED-BY
+	graphd
+	
+TIMEOUTS
+	Timeouts are allocated as separate objects
+	and explicitly associated with sessions.
+
+THREADING
+	The library is implicitly single-threaded.
+	I.e. it doesn't interfere with threads in the
+	back, but there's only one thread calling
+	poll() at any one time.
+	Caller locks if they need to.
+

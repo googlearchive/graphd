@@ -1,0 +1,80 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+error SEMANTICS "cannot sort by count"
+ok ()
+error SYNTAX "variable $foo is returned, but not set in the constraint or any subconstraint"
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+error SEMANTICS "cannot sort by \"foo\""
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+error SYNTAX "cannot sort by nested lists."
+error SEMANTICS "cannot sort by cursor"
+error SEMANTICS "cannot sort by estimate"
+ok ()
+error SEMANTICS "cannot sort by iterator"
+error SEMANTICS "cannot sort by timeout"
+error SEMANTICS "cannot sort by estimate-count"
+error SEMANTICS "cannot sort by count"
+ok ()
+error SYNTAX "variable $foo is returned, but not set in the constraint or any subconstraint"
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+error SEMANTICS "cannot sort by \"foo\""
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+error SEMANTICS "cannot sort by cursor"
+error SEMANTICS "cannot sort by estimate"
+ok ()
+error SEMANTICS "cannot sort by iterator"
+error SEMANTICS "cannot sort by timeout"
+error SEMANTICS "cannot sort by estimate-count"
+ok ()
+error SEMANTICS "cannot sort by count"
+error SYNTAX "variable $bar is returned, but not set in the constraint or any subconstraint"
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+error SEMANTICS "cannot sort by \"foo\""
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+ok ()
+error SYNTAX "cannot sort by nested lists."
+error SEMANTICS "cannot sort by cursor"
+error SEMANTICS "cannot sort by estimate"
+ok ()
+error SEMANTICS "cannot sort by iterator"
+error SEMANTICS "cannot sort by timeout"
+error SEMANTICS "cannot sort by estimate-count"

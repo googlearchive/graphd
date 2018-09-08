@@ -1,0 +1,59 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000002)
+error SEMANTICS "on line 1, column 18: \"b\": multiple values are only allowed in read requests"
+error SEMANTICS "on line 1, column 19: \"b\": multiple values are only allowed in read requests"
+ok ((null))
+ok ((null))
+ok ((null))
+ok ((null))
+ok (("a"))
+ok (("a"))
+ok (("a") ("b"))
+ok (("a") ("b"))
+ok ((null) ("a"))
+ok ((null) ("a"))
+error EMPTY "not found"
+ok (("a"))
+ok ((null))
+ok (("a") ("b"))
+ok
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000002)
+error SEMANTICS "on line 1, column 19: \"b\": multiple values are only allowed in read requests"
+error SEMANTICS "on line 1, column 20: \"b\": multiple values are only allowed in read requests"
+ok ((null))
+ok ((null))
+ok ((null))
+ok ((null))
+ok (("a"))
+ok (("a"))
+ok (("a") ("b"))
+ok (("a") ("b"))
+ok ((null) ("a"))
+ok ((null) ("a"))
+error EMPTY "not found"
+ok (("a"))
+ok ((null))
+ok (("a") ("b"))
+ok
+ok id="write null" (00000012400034568000000000000000)
+ok id="write a" (0000001240003456800000000000000a)
+ok id="write b" (0000001240003456800000000000000d)
+error SEMANTICS id="contradictory" "on line 1, column 37: \"b\": multiple values are only allowed in read requests"
+error SEMANTICS id="contradictory" "on line 1, column 38: \"b\": multiple values are only allowed in read requests"
+ok id="7xnull" ((null) (null) (null) (null) (null) (null) (null))
+ok id="7xnull" ((null) (null) (null) (null) (null) (null) (null))
+ok id="7xnull" ((null) (null) (null) (null) (null) (null) (null))
+ok id="7xnull" ((null) (null) (null) (null) (null) (null) (null))
+ok id="a" (("a"))
+ok id="a" (("a"))
+ok id="a b" (("a") ("b"))
+ok id="a b" (("a") ("b"))
+ok id="null a" ((null) (null) (null) (null) (null) (null) ("a") (null))
+ok id="null a" ((null) (null) (null) (null) (null) (null) ("a") (null))
+error EMPTY id="empty" "not found"
+ok id="a" (("a"))
+ok id="7xnull" ((null) (null) (null) (null) (null) (null) (null))
+ok id="a b" (("a") ("b"))

@@ -1,0 +1,11 @@
+ok (00000012400034568000000000000000)
+ok (0000001240003456800000000000000a)
+ok (0000001240003456800000000000000b)
+error SEMANTICS "on line 1, column 53: ')': unknown subconstraint linkage"
+error SEMANTICS "cannot mix <-right and right=..."
+error SEMANTICS "on line 1, column 58: ')': unknown subconstraint linkage"
+error SEMANTICS "cannot mix <-left and left=..."
+error SEMANTICS "on line 1, column 21: ')': unknown subconstraint linkage"
+ok (0000001240003456800000000000000d (0000001240003456800000000000000c))
+error SEMANTICS "on line 1, column 26: ')': unknown subconstraint linkage"
+error LEXICAL "on line 1, column 8: '~': invalid token"

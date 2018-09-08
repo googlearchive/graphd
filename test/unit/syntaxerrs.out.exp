@@ -1,0 +1,2 @@
+error SEMANTICS "result expression \"(name)\" nests lists more than two levels deep"
+error SYNTAX "can only have one nested list per result list - (x (y)) and ((x y)) work, ((x) (y)) doesn't."

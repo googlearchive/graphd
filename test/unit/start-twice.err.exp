@@ -1,0 +1,4 @@
+ERROR: graphd: server is already running (with process-id NNN).  [Startup aborted.]
+	To stop the old server, run graphd with the -z option.
+	To start a second server on a different database in parallel,
+	use a pid-file other than "start-twice.pid" (option -p <filename>).

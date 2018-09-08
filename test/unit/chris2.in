@@ -1,0 +1,46 @@
+write ("{http://www.appliedminds.com/wp-types/0.1}entry"
+        (-> "{http://www.appliedminds.com/wp-types/0.1}entry.category"
+	   ("{http://www.appliedminds.com/wp-types/0.1}category"
+	    value="sample"))
+        (-> "{http://www.appliedminds.com/wp-types/0.1}entry.name"
+	   ("{http://www.appliedminds.com/wp-types/0.1}name"
+	    value="Sample Article"))
+        (-> "{http://www.appliedminds.com/wp-types/0.1}entry.article"
+	   ("{http://www.appliedminds.com/wp-types/0.1}article"
+	    value="''''This article has not yet been created''''")))
+read ("{http://www.appliedminds.com/wp-types/0.1}category"
+       result=count)
+read ("{http://www.appliedminds.com/wp-types/0.1}category"
+       result=value)
+read ("{http://www.appliedminds.com/wp-types/0.1}category"
+       value="sample"
+       result=contents
+	(<- type="{http://www.appliedminds.com/wp-types/0.1}entry.category"
+	    result=count))
+read ("{http://www.appliedminds.com/wp-types/0.1}category"
+       value="sample"
+	(<- "{http://www.appliedminds.com/wp-types/0.1}entry.category"
+	    ("{http://www.appliedminds.com/wp-types/0.1}entry")))
+write ("{http://www.appliedminds.com/wp-types/0.1}entry"
+        (-> "{http://www.appliedminds.com/wp-types/0.1}entry.category"
+	   ("{http://www.appliedminds.com/wp-types/0.1}category"
+	    value="sample"))
+        (-> "{http://www.appliedminds.com/wp-types/0.1}entry.name"
+	   ("{http://www.appliedminds.com/wp-types/0.1}name"
+	    value="Sample Article"))
+        (-> "{http://www.appliedminds.com/wp-types/0.1}entry.article"
+	   ("{http://www.appliedminds.com/wp-types/0.1}article"
+	    value="''''This article has not yet been created''''")))
+read ("{http://www.appliedminds.com/wp-types/0.1}category"
+       result=count)
+read ("{http://www.appliedminds.com/wp-types/0.1}category"
+       result=value)
+read ("{http://www.appliedminds.com/wp-types/0.1}category"
+       value="sample"
+       result=contents
+	(<- type="{http://www.appliedminds.com/wp-types/0.1}entry.category"
+	    result=count))
+read ("{http://www.appliedminds.com/wp-types/0.1}category"
+       value="sample"
+	(<- "{http://www.appliedminds.com/wp-types/0.1}entry.category"
+	    ("{http://www.appliedminds.com/wp-types/0.1}entry")))

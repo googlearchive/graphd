@@ -1,0 +1,114 @@
+addb: no file "0001.tst.d/primitive/i-00.addb"
+graphd: open database path=0001.tst.d, type=(default), id=(default)
+srv-buffer-pool.c:219: new buffer 0x540918 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x5419a8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x542a38 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x543ac8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x544b58 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x545be8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x546c78 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x547d08 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x548d98 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x549e28 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x54aeb8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x54bf48 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x54cfd8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x54e068 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x54f0f8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x550188 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x551218 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x5522a8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x553338 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x5543c8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x555458 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x5564e8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x557578 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x558608 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x559698 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x55a728 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x55b7b8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x55c848 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x55d8d8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x55e968 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x55f9f8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x560a88 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x561b18 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x562ba8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x563c38 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x564cc8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x565d58 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x566de8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x567e78 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x568f08 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x569f98 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x56b028 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x56c0b8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x56d148 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x56e1d8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x56f268 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x5702f8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x571388 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x572418 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x5734a8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x574538 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x5755c8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x576658 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x5776e8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x578778 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x579808 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x57a898 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x57b928 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x57c9b8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x57da48 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x57ead8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x57fb68 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x580bf8 (4096 bytes)
+srv-buffer-pool.c:219: new buffer 0x581c88 (4096 bytes)
+buffer pool: 262144 bytes in 64 buffers; low watermark 0, high 262144; page size 4096
+graphd 0.1 starting up.
+tty event: ed=0x528838, fd=0, events=1
+session *interactive* gets priority
+buffer pool: recycle buffer 0x540918 (4096 bytes)
+bc: added output capacity
+buffer pool: recycle buffer 0x5419a8 (4096 bytes)
+bc: added input capacity
+C: write (name="F",	 <-)
+write (ScopE  	  	=0,  leFt = 	6be9ABDC2C5bEA5eEeeefdbFaEb...
+bc: 87 bytes ready to be parsed
+T: 119, parse 0x409bd2, data "write"
+T: 40, parse 0x409a66, data "("
+T: 110, parse 0x408f99, data "name"
+T: 61, parse 0x407865, data "="
+T: 34, parse 0x4076e6, data "F"
+T: 44, parse 0x408f99, data ","
+T: 60, parse 0x408f99, data "<-"
+T: 41, parse 0x408f99, data ")"
+constraint: [graphd-parse.c:1057]
+->
+NAME: "F"
+session 0x582d88 request 0x5870b8 arrived
+T: 119, parse 0x409bd2, data "write"
+T: 40, parse 0x409a66, data "("
+T: 83, parse 0x408f99, data "ScopE"
+T: 61, parse 0x4075df, data "="
+T: 48, parse 0x40737a, data "0"
+T: 44, parse 0x408f99, data ","
+T: 108, parse 0x408f99, data "leFt"
+T: 61, parse 0x4075df, data "="
+T: 54, parse 0x40737a, data "6be9ABDC2C5bEA5eEeeefdbFaEbeaCb5"
+T: 41, parse 0x408f99, data ")"
+constraint: [graphd-parse.c:1057]
+node
+LEFT: 6be9abdc2c5bea5eeeeefdbfaebeacb5
+SCOPE: 0
+session 0x582d88 request 0x587678 arrived
+tty event: ed=0x528878, fd=1, events=4
+
+request fails: SEMANTICS links must point somewhere. [graphd-write.c:326]
+
+Variable "unused" is not available.
+Variable "tok_out" is not available.
+Variable "data" is not available.
+Variable "ed" is not available.
+Variable "argv" is not available.
+Variable "argc" is not available.

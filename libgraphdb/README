@@ -1,0 +1,23 @@
+libgraphdb.a - C graph repository client library
+
+Services:
+	- connect to graph database servers,
+	  failing over transparently among multiple access points
+	- construct graphs
+	- execute queries against graphs
+
+Documentation:
+	HTML -- doc/html/graphdb_8h.html
+	man  -- doc/man/man3/graphdb.h.3
+
+	To refresh the documentation, have doxygen 1.4.2 or better
+	installed and run "make docs".
+
+Used by:
+	little maintenance and load scripts, once it's finished
+
+Sample Applications:
+	graphdb-to-dot -- turn results of a graphdb query into
+	  		  graphviz ".dot" input.
+Implemented in:
+	C

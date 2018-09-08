@@ -1,0 +1,5 @@
+error SEMANTICS "on line 1, column 17: 'hippopotamus': invalid datatype"
+ok (00000012400034568000000000000000)
+ok (boolean "false")
+ok (00000012400034568000000000000001)
+ok (boolean "true")

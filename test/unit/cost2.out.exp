@@ -1,0 +1,6 @@
+ok ("")
+ok
+ok ("ts=5 tu=3 pr=11 dr=1 ir=7 in=9")
+error SEMANTICS "cannot parse cost string \"falafel=$3.50\""
+ok ("ts=5 tu=3 pr=11 dr=1 ir=7 in=9")
+ok ("")

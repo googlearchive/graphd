@@ -1,0 +1,187 @@
+
+		Graph Repository Data Model
+
+This is the data model for the graph repository, as expressed
+in its access protocols and in guarantees that the repository
+makes about its internal state.
+
+SUMMARY
+
+The graph database is a collection of small fixed-sized structures
+we call "primitives".  Dealing with the graph database means
+creating and querying primitives.
+
+There are two kinds of primitives: nodes and links.  A link
+is like a node, but has two more fields - pointers to a left
+and a right node.
+
+
+1. COMMON PRIMITIVE COMPONENTS
+
+All primitives have the following pieces in common:
+
+1.1 GUID: 128-bit integer.
+
+	A nonzero, globally unique ID.  A primitive that is modified
+	implicitly changes its GUID.  (In other words, a GUID completely
+	identifies one "version" of a primitive.)
+
+	A GUID has two parts:
+	- a "version" part that is either random or a timestamp;
+	- an "identity" part that stays the same for all versions
+	  of a primitive.
+
+	(The underlying identity relationship, while persistent, is
+	defined only by the application - two primitives are versions
+	of the same application-thing if and only if the application
+	says they are.)
+
+	It is possible for the graph repository to test in short,
+	constant time whether two GUIDs are versions of the same
+	thing.
+
+	The version-independent identity fields of objects are
+	the same if and only if the application said so.  (That is,
+	those version-independent identity fields are unique, too.)
+
+	The graph repository can easily (in constant time) find the
+	current version of any GUID presented to it, even if the
+	primitive owner of the GUID itself no longer exists in the
+	repository.
+
+
+1.2 timestamp: 64-bit integer.
+
+      A timestamp with sub-second resolution.
+
+      Each node or link created on one local system has a unique timestamp.
+      Primitives created in sequential synchronous requests have
+      timestamps as one would expect (the one that's created second has
+      a timestamp that is higher than that of the one created first.)
+
+1.3 type: string.
+
+      An arbitrary octetstring that does not contain nullbytes.
+
+      Many primitives are expected to have the same type, and
+      the number of types in the system is bounded by the complexity
+      of the system's structure.
+
+      The application could standardize on a naming schema
+      that keeps types from different independent applications
+      separate, but the graph repository doesn't enforce that,
+      and there are good arguments for doing that on an object
+      level.  (See cvs:graph/doc/gr-type.txt.)
+
+
+1.4 name: string.
+
+      For the graph repository, that's an arbitrary octetstring that
+      does not contain nullbytes.  Many primitives are expected to
+      have the same name.
+
+      There are primitives that don't have a name; that's different from
+      having a name that is the empty string ("").
+
+      The name often plays the role of "units" to the value;
+      most of the semantic names given to nodes and links should
+      really be types.
+
+
+1.5 datatype: enumerated tag.
+
+      One of a small number of built-in data types that controls the
+      interpretation of the following value field. There are primitives
+      that don't have a datatype (or a null datatype.)
+
+      Datatypes are:
+
+          string     - an UTF-8 string.
+          integer    - a 64-bit signed integer
+          float      - a floating point value of unspecified precision
+          timestamp  - a 64-bit time stamp value, fit for
+			comparison with primitive's timestamps and use as
+			a boundary in searches
+          URL 	     - an us-ascii string that encodes a URL, for example
+	  	       an internal URL pointing to a text or data fragment
+		       in a nearby repository
+          GUID 	     - a 128-bit internal GUID or null
+          bytestring - a string of 8-bit bytes that can
+	  		contain any values, including \0
+
+1.6 value: octet string.
+
+      The meaning of a value is encoded explicitly in the "datatype"
+      component.  The range of values for each type is expected to vary
+      extensively. (I.e. while it's efficient to hash names and types,
+      it may not be efficient to hash all values, and its number is
+      bounded by the number of nodes and links in the system,
+      not by the system's complexity.)
+
+      Primitives don't have a value if and only if they also don't
+      have a datatype.
+
+
+1.7 archival: boolean.
+
+      If true, the rest of the information in the primitive encodes
+      user input and should be archived.  (This is the default.)
+      If the flag is set to false, the information has
+      been algorithmically derived from other information in the
+      graph and should not, or need not, be archived.
+
+      The opposite of "archival" is called "ephemeral".
+
+
+1.8 live: boolean.
+
+      If true, the rest of the information in the primitive is part
+      of the current database state.  (This is the default.)
+      If the flag is set to false, the entry is a "tombstone", merely
+      taking the place of an entry that was there previously and that
+      has been deleted.
+
+      (That is, all it does is announce to the world that it is no
+      longer valid.)
+
+      Entries without the "live bit" are by default filtered out of
+      queries, but when mirroring systems or subscribing to updates,
+      they are useful in announcing to a listener that a primitive
+      is no longer part of the application's idea of reality.
+
+      The opposite of "live" is called "deleted".
+
+
+1.9 scope: GUID
+
+	A pointer to a node of a special type - admin.scope - 
+	that defines the access privileges for this primitive.
+
+	Scopes can refer to other scopes in a strict hierarchy,
+	but each primitive is in exactly one scope.
+
+
+2. LINK COMMPONENTS
+
+In addition to the common pieces, links also contain the following:
+
+2.1 left, right: 128-bit integers
+
+      If non-zero, the integers are GUIDs intended to refer to other
+      primitives.  The link is thought of as "connecting" those 
+      primitives.
+
+      Depending on the nature of the link, there may be a semantic to
+      the directionality (e.g., is-parent-of) or not (are-friends).
+
+      When directionality is not implied by a link, the link is still
+      directional in the database, but queries that use it will specify
+      expressions that allow links to go in one or the other direction.
+      (E.g., using the "<->" meta-constraint syntax.)
+
+      The left GUID must be non-zero.
+      The right GUID may or may not be zero.
+
+3. DISCUSSION
+
+...

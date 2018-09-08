@@ -1,0 +1,18 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000002)
+error SEMANTICS "on line 1, column 12: '!=': operator cannot be used in write requests"
+ok (("a") ("b"))
+ok (("a") ("b"))
+ok (("a") ("b"))
+ok (("a") ("b"))
+ok ((null) ("b"))
+ok ((null) ("b"))
+ok ((null))
+ok ((null))
+ok (("b"))
+ok (("b"))
+error EMPTY "not found"
+ok ((null))
+ok (("b"))
+ok (("b"))

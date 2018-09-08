@@ -1,0 +1,7 @@
+ok (00000012400034568000000000000000)
+ok (("all" 0 0) (("n" 1) ("check-cost" 1) ("next-cost" 1) ("find-cost" 0) ("low" 0) ("high" 1) "forward"))
+ok ((("all" 0 0) (("n" 1) ("check-cost" 1) ("next-cost" 1) ("find-cost" 0) ("low" 0) ("high" 1) "forward")))
+error SYNTAX "'count', 'cursor', 'estimate', 'estimate-count', 'iterator', or 'timeout' can only appear inside at most one set of parentheses"
+ok ("all[0...1: 1]" true 1 1 1)
+ok (("all[0...1: 1]" true 1 1 1))
+error SYNTAX "'count', 'cursor', 'estimate', 'estimate-count', 'iterator', or 'timeout' can only appear inside at most one set of parentheses"

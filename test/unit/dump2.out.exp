@@ -1,0 +1,1 @@
+error SYNTAX "on line 1, column 7: \"hello, world\": expected a dump constraint, or ')'"

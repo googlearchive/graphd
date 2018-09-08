@@ -1,0 +1,5 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000002)
+error SYNTAX "can only have one nested list per result list - (x (y)) and ((x y)) work, ((x) (y)) doesn't."
+error SYNTAX "can only have one nested list per result list - (x (y)) and ((x y)) work, ((x) (y)) doesn't."

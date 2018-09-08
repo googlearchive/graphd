@@ -1,0 +1,3 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+error EXISTS "primitive tagged as unique already exist"

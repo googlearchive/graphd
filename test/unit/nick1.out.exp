@@ -1,0 +1,1 @@
+error SEMANTICS "can't use \"contents\" return instruction in template without contained templates"

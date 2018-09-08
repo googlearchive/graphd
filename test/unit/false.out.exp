@@ -1,0 +1,8 @@
+ok (00000012400034568000000000000000)
+error EMPTY "not found"
+error EMPTY "not found"
+error SEMANTICS "on line 1, column 8: 'false': constraint can only be used in read requests"
+ok ((00000012400034568000000000000000 null null string "a" null true true 1970-01-01T00:00:00.0000Z))
+ok ()
+ok ()
+error SEMANTICS "on line 1, column 8: 'optional': constraint can only be used in read requests"

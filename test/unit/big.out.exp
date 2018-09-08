@@ -1,0 +1,3 @@
+ok (00000012400034568000000000000000)
+error TOOBIG "primitive too big"
+error TOOBIG "name too long"

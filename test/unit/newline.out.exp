@@ -1,0 +1,7 @@
+error LEXICAL "on line 1, column 14: '\"this text contains\\012': invalid token"
+error SYNTAX "on line 1, column 1: 'a': no such request"
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000002)
+ok ((00000012400034568000000000000000 null null string "this text contains\nanother newline." null true true 1970-01-01T00:00:00.0000Z) (00000012400034568000000000000001 null null string "three, in sequence: \n\n\n" null true true 1970-01-01T00:00:00.0001Z) (00000012400034568000000000000002 null null string "I'm not a \\n, I just play one on tee vee!" null true true 1970-01-01T00:00:00.0002Z))
+ok ((00000012400034568000000000000000 null null string "this text contains\nanother newline." null true true 1970-01-01T00:00:00.0000Z) (00000012400034568000000000000001 null null string "three, in sequence: \n\n\n" null true true 1970-01-01T00:00:00.0001Z) (00000012400034568000000000000002 null null string "I'm not a \\n, I just play one on tee vee!" null true true 1970-01-01T00:00:00.0002Z))

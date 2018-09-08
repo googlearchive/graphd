@@ -1,0 +1,10 @@
+ok ()
+ok cost="omitted" ()
+ok cost="omitted" cost="omitted" ()
+ok cost="omitted" id="flipper" dateline="00000012400034568000000000000000" ()
+ok cost="omitted" id="flipper" ()
+ok dateline="00000012400034568000000000000000" ()
+ok dateline="00000012400034568000000000000000" dateline="00000012400034568000000000000000" id="flipper" cost="omitted" ()
+ok id="foo" ()
+ok id="foo" cost="omitted" id="bar" ()
+error SYNTAX id="foo" cost="omitted" "error parsing cost element at \"This is not a syntactically correct cost.\" -- expected '=', got 'i'"

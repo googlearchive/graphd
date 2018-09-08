@@ -1,0 +1,66 @@
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000002)
+ok (00000012400034568000000000000003)
+ok id="+++ name +++" (("a") ("b") ("c") (null))
+ok id="name = = b" (("b"))
+error EMPTY id="name = = EMPTY" "not found"
+ok id="name = = null" ((null))
+ok id="name = = null" ((null))
+ok id="name = != b" (("b"))
+error EMPTY id="name = != EMPTY" "not found"
+ok id="name = != null" ((null))
+ok id="name = != a" (("a"))
+ok id="name != = c" (("c"))
+error EMPTY id="name != = EMPTY" "not found"
+ok id="name != = b" (("b"))
+ok id="name != = abc" (("a") ("b") ("c"))
+ok id="name != != c" (("c"))
+error EMPTY id="name != != EMPTY" "not found"
+ok id="name != != b" (("b"))
+ok id="name != != abc" (("a") ("b") ("c"))
+ok
+ok (00000012400034568000000000000000)
+ok (00000012400034568000000000000001)
+ok (00000012400034568000000000000002)
+ok (00000012400034568000000000000003)
+ok id="value = = b" (("b"))
+error EMPTY id="value = = EMPTY" "not found"
+ok id="value = = null" ((null))
+ok id="value = = null" ((null))
+ok id="value = != b" (("b"))
+error EMPTY id="value = != EMPTY" "not found"
+ok id="value = != null" ((null))
+ok id="value = != a" (("a"))
+ok id="value = ~= b" (("b"))
+error EMPTY id="value = ~= EMPTY" "not found"
+ok id="value = ~= null" ((null))
+ok id="value = ~= null" ((null))
+ok id="value = ~= null" ((null))
+ok id="value = ~= a" (("a"))
+ok id="value != = c" (("c"))
+error EMPTY id="value != = EMPTY" "not found"
+ok id="value != = b" (("b"))
+ok id="value != = abc" (("a") ("b") ("c"))
+ok id="value != != c" (("c"))
+error EMPTY id="value != != EMPTY" "not found"
+ok id="value != != b" (("b"))
+ok id="value != != abc" (("a") ("b") ("c"))
+ok id="value != ~= c" (("c"))
+error EMPTY id="value != ~= EMPTY" "not found"
+ok id="value != ~= b" (("b"))
+ok id="value != ~= abc" (("a") ("b") ("c"))
+ok id="value ~= = b" (("b"))
+error EMPTY id="value ~= = EMPTY" "not found"
+ok id="value ~= = null" ((null))
+ok id="value ~= = null" ((null))
+ok id="value ~= != b" (("b"))
+error EMPTY id="value ~= != EMPTY" "not found"
+ok id="value ~= != null" ((null))
+ok id="value ~= != a" (("a"))
+ok id="value ~= ~= b" (("b"))
+error EMPTY id="value ~= ~= EMPTY" "not found"
+ok id="value ~= ~= null" ((null))
+ok id="value ~= ~= null" ((null))
+ok id="value ~= ~= null" ((null))
+ok id="value ~= ~= a" (("a"))

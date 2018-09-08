@@ -1,0 +1,2 @@
+ERROR: configuration file "cost2.broken.conf", line 2: "cost": unknown cost abbreviation "falafel", known: tr tu ts te pr pf dr dw ir iw in va fm mm ft mt
+ERROR: configuration file "cost2.short.broken.conf", line 1: don't understand "falafel"

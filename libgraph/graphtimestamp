@@ -1,0 +1,5 @@
+#!/bin/sh
+
+DIRPATH=${0%/*}
+eval `cd "$DIRPATH"; make --no-print-directory obj-export`
+exec "$DIRPATH"/${OBJ}/graphtimestamp "$@"

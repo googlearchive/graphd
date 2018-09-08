@@ -1,0 +1,27 @@
+libsrv.a - protocol server
+
+The non-protocol-specific trappings of a text-based protocol
+server (see the "uncopying server" paper in cvs:graph/gr-uncopying.txt).
+
+This is factored out in an attempt to later make it usable
+for other servers (and this module truly doesn't know a node
+from a hole in the ground), but it's still far from at the
+point where it's sensible or well structured -- don't bug
+me about it just now [Mar 2005].
+
+Services:
+	- pid-file allows external shutdown of server, locks
+	- monitoring process restarts server thread after crash
+	- configuration file defines interfaces for listening
+	- command line arguments
+	- loglevel set on command line or in configuration file
+	- run as uid, gid instead of root
+
+Tested:
+	Nowhere near enough.
+
+Used by:
+	Graph database
+
+Implemented in:
+	C

@@ -1,0 +1,32 @@
+libgraph.a - graph repository basic data types
+
+This abstracts out little data types like a GUID
+or a timestamp, for use by applications and
+semantic server parts, without knowing anything
+about, or touching on, requests or transport.
+
+Services:
+	- graph_guid and accessor functions
+	- graph_timestamp_t and accessors
+	- graph_set (set of GUIDs) and accessors [still in development]
+	- datatype names
+
+Other Things You May Be Looking For When Reading This:
+
+	... the graph repository server program code?
+		../graph/src
+
+	... the graph repository client library?
+		../libgraphdb
+
+	... low level database code?
+		../libpdb
+
+	... *really* low level database code?
+		../libaddb
+
+Used by:
+	graph, graphdb
+
+Implemented in:
+	C

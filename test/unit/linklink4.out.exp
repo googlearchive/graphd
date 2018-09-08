@@ -1,0 +1,1 @@
+error SEMANTICS "can't use (<-left ..) on the outermost constraint - do you mean left=GUID?"

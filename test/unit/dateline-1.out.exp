@@ -1,0 +1,16 @@
+ok dateline="00000012400034568000000000000001" (00000012400034568000000000000000)
+ok dateline="00000012400034568000000000000002" (00000012400034568000000000000001)
+ok dateline="00000012400034568000000000000003" (00000012400034568000000000000002)
+ok dateline="00000012400034568000000000000004" (00000012400034568000000000000003)
+ok dateline="00000012400034568000000000000005" (00000012400034568000000000000004)
+ok dateline="00000012400034568000000000000006" (00000012400034568000000000000005)
+ok dateline="00000012400034568000000000000007" (00000012400034568000000000000006)
+error SYNTAX dateline="00000012400034568000000000000000" "on line 1, column 15: \"it doesn't matter what you put here?\": invalid dateline value"
+error SYNTAX "on line 1, column 15: '=': expected '<' or '>'"
+error SEMANTICS "dateline constraint in literal"
+error SYNTAX "invalid dateline \"This is not a syntactically correct dateline!\""
+ok (("pepper") ("apple") ("onion") ("corn"))
+ok (("pear") ("tomato") ("potato") ("pepper") ("apple") ("onion") ("corn"))
+ok (("corn"))
+error EMPTY "not found"
+error EMPTY "not found"

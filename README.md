@@ -1,7 +1,7 @@
 # Graphd, the Metaweb Graph Repository
 
 For an introduction to graphd, see
-[A Brief Introduction to Graphd](https://goo.gl/mv6bcS).
+[A Brief Introduction to Graphd](doc/a-brief-tour-of-graphd.md)
 
 This is not an official Google product.
 

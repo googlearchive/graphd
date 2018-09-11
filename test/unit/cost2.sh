@@ -25,7 +25,7 @@ rungraphd -f cost2.conf -d${D} -bty <<-'EOF'
 	set (cost="falafel=$3.50")
 	status (cost)
 	EOF
-rungraphd -f cost2.broken.conf -d${D} -bty 
+rungraphd -f cost2.broken.conf -d${D} -bty
 rungraphd -f cost2.short.conf -d${D} -bty <<-'EOF'
 	status (cost)
 	EOF

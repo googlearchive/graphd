@@ -21,7 +21,7 @@
 
 #eval `make --no-print-directory obj-export`
 rungraphd_mode=${GD_RUN_MODE:-plain}
-D=${TEST_TMPDIR}/$B
+D=$B
 rungraphd_pass=0
 GFLAGS=${GFLAGS-"-voperator-error"}
 
@@ -30,7 +30,7 @@ GFLAGS=${GFLAGS-"-voperator-error"}
 #   	run graphd
 #
 
-GRAPHD=${TEST_SRCDIR}/graphd/graphd
+GRAPHD=../../graphd/graphd
 
 function rungraphd ()
 {

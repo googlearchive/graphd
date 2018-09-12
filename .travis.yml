@@ -26,6 +26,7 @@ before_install:
     chmod +x install.sh
     ./install.sh --user
     rm -f install.sh
+
 script:
   - |
     bazel \
@@ -33,9 +34,9 @@ script:
       --host_jvm_args=-Xmx500m \
       --host_jvm_args=-Xms500m \
       test \
-      --config=ci \
       --experimental_repository_cache="$HOME/.bazel_repository_cache" \
       --local_resources=400,1,1.0 \
       //...
+
 notifications:
   email: false

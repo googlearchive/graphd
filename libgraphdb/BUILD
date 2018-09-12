@@ -47,6 +47,7 @@ cc_library(
     ],
     hdrs = [
         "graphdb.h",
+        "graphdb-args.h",
         "graphdbp.h",
     ],
     copts = ["-g"],
@@ -58,14 +59,14 @@ cc_library(
 )
 
 cc_binary(
-  name = "graphdb-to-dot",
-  srcs = [
-      "graphdb-to-dot.c",
-  ],
-  deps = [
-    "//libcl",
-    "//libcm",
-    "//libgraph",
-    "//libgraphdb",
-  ],
+    name = "graphdb-to-dot",
+    srcs = [
+        "graphdb-to-dot.c",
+    ],
+    deps = [
+        "//libcl",
+        "//libcm",
+        "//libgraph",
+        "//libgraphdb",
+    ],
 )

@@ -1,7 +1,7 @@
 ok ("")
-ok
-ok ("tr=4 ts=5 tu=3 pr=11 pf=10 va=6 dr=1 dw=2 iw=8 ir=7 in=9 fm=12 mm=13 ft=14 mt=15")
-ok
-ok ("ts=5 tu=3 pr=11 dr=1 ir=7 in=9 mm=13 mt=15")
+error SEMANTICS "cannot parse cost string \"dr=1 dw=2 tu=3 tr=4 ts=5 va=6 ir=7 iw=8 in=9 pf=10 pr=11 fm=12 mm=13 ft=14 mt=15\""
+ok ("")
+error SEMANTICS "cannot parse cost string \"dr=1 tu=3 ts=5 ir=7 in=9 pr=11 mm=13 mt=15\""
+ok ("")
 error SEMANTICS "cannot parse cost string \"falafel=$3.50\""
-ok ("ts=5 tu=3 pr=11 dr=1 ir=7 in=9 mm=13 mt=15")
+ok ("")

@@ -1,2 +1,3 @@
-ERROR: graphd: another server is already accessing the database ".*doubletrouble".
+ERROR: graphd: another server is already accessing the database "doubletrouble".
 ERROR: graphd: shut down that process before starting a new one.
+

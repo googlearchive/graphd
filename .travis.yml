@@ -8,19 +8,13 @@ language: java
 
 os:
   - linux
-  - osx
 
 env:
   - V=0.16.0
 
 before_install:
   - |
-    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      OS=darwin
-    else
-      sysctl kernel.unprivileged_userns_clone=1
-      OS=linux
-    fi
+    OS=linux
     URL="https://github.com/bazelbuild/bazel/releases/download/${V}/bazel-${V}-installer-${OS}-x86_64.sh"
     wget -O install.sh "${URL}"
     chmod +x install.sh
@@ -30,11 +24,9 @@ before_install:
 script:
   - |
     bazel \
-      --output_base=$HOME/.cache/bazel \
       --host_jvm_args=-Xmx500m \
       --host_jvm_args=-Xms500m \
       test \
-      --experimental_repository_cache="$HOME/.bazel_repository_cache" \
       --local_resources=400,1,1.0 \
       //...
 

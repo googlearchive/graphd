@@ -5,18 +5,20 @@ package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "graphdh",
-    hdrs = ["graphd.h",
-            "graphd-ast-debug.h",
-            "graphd-ast.h",
-            "graphd-hash.h",
-            "graphd-islink.h",
-            "graphd-iterator-and.h",
-            "graphd-iterator-isa.h",
-            "graphd-read.h",
-            "graphd-sabotage.h",
-            "graphd-snapshot.h",
-            "graphd-version.h",
-            "graphd-write.h"
+    hdrs = [
+        "graphd.h",
+        "graphd-ast.h",
+        "graphd-ast-debug.h",
+        "graphd-build-version.c",
+        "graphd-hash.h",
+        "graphd-islink.h",
+        "graphd-iterator-and.h",
+        "graphd-iterator-isa.h",
+        "graphd-read.h",
+        "graphd-sabotage.h",
+        "graphd-snapshot.h",
+        "graphd-version.h",
+        "graphd-write.h",
     ],
 )
 

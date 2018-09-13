@@ -8,9 +8,11 @@
         ],
         data = [
             test,
+            "spewrequest.pl",
             "rungraphd",
             "//graphd",
             "//util:gpush",
+            "//gld",
         ] + glob([
             "%s*.exp" % test[:-3],
             "%s*.in" % test[:3],

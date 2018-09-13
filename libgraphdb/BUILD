@@ -14,6 +14,7 @@ cc_library(
         "graphdb-buffer-dup.c",
         "graphdb-buffer-format.c",
         "graphdb-buffer-free.c",
+        "graphdb-build-version.c",
         "graphdb-connect.c",
         "graphdb-connection-drop.c",
         "graphdb-create.c",

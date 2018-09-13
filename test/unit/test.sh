@@ -32,7 +32,6 @@ result=ok
 
 if [ "x$1" == "x-v" ]; then
   verbose=on
-  set -x
   shift
 fi
 

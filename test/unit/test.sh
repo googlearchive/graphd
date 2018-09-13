@@ -48,7 +48,7 @@ function error() {
 
 function verbose_log() {
   if [ "$verbose" == "on" ]; then
-    echo -n "$@"
+    echo "$@"
   fi
 }
 

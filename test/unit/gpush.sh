@@ -23,10 +23,11 @@ rm -rf $D
 rungraphd -i tcp::8102 -d${D} -p ${D}.pid
 
 # run the gpush tool against it.
-# It'll send up to 100,000 (-n 100000) "write ()\n" requests, and
+# It'll send up to 10,000,000 (-n 10000000) "write ()\n" requests, and
 # terminate successfully only if the socket to graphd didn't become
 # readable for 10 (-w 10) seconds.
-if ../../graphutil/${OBJ}/gpush -s tcp::8102 -n 100000 -w 10 -z 
+
+if ../../util/gpush -s tcp::8102 -n 10000000 -w 10 -z
 then
 	echo gpush: ok
 else

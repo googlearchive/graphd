@@ -28,6 +28,7 @@ script:
       --host_jvm_args=-Xms500m \
       test \
       --local_resources=400,1,1.0 \
+      --test_output=errors \
       //...
 
 notifications:

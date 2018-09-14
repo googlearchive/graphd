@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/google/graphd.svg?branch=master)](https://travis-ci.org/google/graphd)
+
 # Graphd, the Metaweb Graph Repository
 
 For an introduction to graphd, see

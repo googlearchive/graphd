@@ -8,7 +8,6 @@
         ],
         data = [
             test,
-            "spewrequest.pl",
             "rungraphd",
             "//graphd",
             "//util:gpush",

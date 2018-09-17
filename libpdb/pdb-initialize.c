@@ -122,7 +122,15 @@ static int pdb_check_max_files(pdb_handle* pdb) {
   }
 
   if (lim.rlim_cur != lim.rlim_max) {
+
+#ifdef __APPLE__
+    if (lim.rlim_max != RLIM_INFINITY)
+      lim.rlim_cur = lim.rlim_max;
+    else
+      lim.rlim_cur = OPEN_MAX;
+#else /* !__APPLE__ */
     lim.rlim_cur = lim.rlim_max;
+#endif /* __APPLE__ */
 
     rv = setrlimit(PDB_RLIMIT_NOFILES, &lim);
     if (rv < 0) {

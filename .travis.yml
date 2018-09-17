@@ -8,12 +8,18 @@ language: java
 
 os:
   - linux
+  - osx
 
 env:
   - V=0.16.0
 
 before_install:
   - |
+    if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
+      OS=darwin
+    else
+      OS=linux
+    fi
     OS=linux
     URL="https://github.com/bazelbuild/bazel/releases/download/${V}/bazel-${V}-installer-${OS}-x86_64.sh"
     wget -O install.sh "${URL}"

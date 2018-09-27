@@ -23,7 +23,7 @@ limitations under the License.
  * Load the most recent snapshot of the database.
  *
  * Returns zero on success, otherwise a positive error code, in particular
- * ENODATA if a snapshot is not available.
+ * ENODATA if a snapshot is not available (EIO on FreeBSD).
  */
 int graphd_snapshot_restore(graphd_handle* g, srv_handle* srv,
                             graphd_database_config const* dcf) {
@@ -44,7 +44,11 @@ int graphd_snapshot_restore(graphd_handle* g, srv_handle* srv,
 
   if (dcf->dcf_snap == NULL) {
     cl_log(cl, CL_LEVEL_ERROR, "%s(): no snapshot directory specified", fn);
+#if __FreeBSD__
+    return EIO;
+#else
     return ENODATA;
+#endif
   }
 
   /*
@@ -77,7 +81,11 @@ int graphd_snapshot_restore(graphd_handle* g, srv_handle* srv,
 retry:
   if (attempts >= attempts_max) {
     cl_log(cl, CL_LEVEL_ERROR, "%s(): giving up", fn);
+#if __FreeBSD__
+    return EIO;
+#else
     return ENODATA;
+#endif
   } else if (attempts > 0) {
     sleep(1);
     cl_log(cl, CL_LEVEL_ERROR, "%s(): retrying...", fn);
@@ -108,7 +116,11 @@ retry:
   if (strncmp(name, "graph.", 6))  // just in case..
   {
     cl_log(cl, CL_LEVEL_ERROR, "%s(): unexpected snapshot name: %s", fn, name);
+#if __FreeBSD__
+    return EIO;
+#else
     return ENODATA;
+#endif
   }
 
   cl_log(cl, CL_LEVEL_INFO, "%s(): most recent snapshot: %s", fn, name);

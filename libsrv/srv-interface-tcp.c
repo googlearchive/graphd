@@ -28,6 +28,7 @@ limitations under the License.
 #include "srvp.h"
 #include "srv-interface.h"
 #include "srv-interface-socket.h"
+#include "srv-interface-tcp.h"
 
 /*  Per-server session structure.  Just used to accept() and
  *  start new connections.
@@ -287,7 +288,8 @@ static bool tcp_socket_is_lost(cl_handle *cl, int fd) {
   cl_log(cl, CL_LEVEL_VERBOSE, "tcp_socket_is_lost(%d)", fd);
   if (level_tcp == -1) {
     struct protoent *pe;
-    level_tcp = ((pe = getprotobyname("TCP")) == NULL) ? SOL_TCP : pe->p_proto;
+    // IPPROTO_TCP should be more portable than TCP_SOL.
+    level_tcp = ((pe = getprotobyname("TCP")) == NULL) ? IPPROTO_TCP : pe->p_proto;
   }
 
   memset(&inf, 0, sizeof inf);

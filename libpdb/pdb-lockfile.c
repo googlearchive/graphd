@@ -554,7 +554,11 @@ int pdb_lockfile_create(pdb_handle *pdb, char const *lockfile_path) {
       cl_log(pdb->pdb_cl, CL_LEVEL_ERROR,
              "pdb_lockfile_create: stale lock-file detected, "
              "database is probably corrupted");
+#if __FreeBSD__
+      err = EIO;
+#else
       err = ENODATA;
+#endif
       break;
     } else if (rename(replacement_path, lockfile_path) != 0) {
       cl_log(pdb->pdb_cl, CL_LEVEL_SPEW,

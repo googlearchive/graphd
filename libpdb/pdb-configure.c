@@ -28,7 +28,7 @@ limitations under the License.
 #define PDB_MEMORY_MAP_SLOTS (64 * 1024ull)
 #endif
 
-#if __APPLE__
+#if __APPLE__ || __FreeBSD__
 
 #ifndef USE_SYSCTL
 #define USE_SYSCTL 1

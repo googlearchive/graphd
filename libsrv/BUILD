@@ -40,6 +40,7 @@ cc_library(
         "srv.h",
         "srv-interface.h",
         "srv-interface-socket.h",
+        "srv-interface-tcp.h",
     ],
     copts = [
         "$(STACK_FRAME_UNLIMITED)",

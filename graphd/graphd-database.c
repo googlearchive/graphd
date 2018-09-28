@@ -199,7 +199,11 @@ again:
              "%s: no database at \"%s\": "
              "create/extract a database dir. ",
              srv_program_name(srv), dcf->dcf_path);
+#if __FreeBSD__
+    } else if (err == EIO && try_snapshot) {
+#else
     } else if (err == ENODATA && try_snapshot) {
+#endif
       /* A stale lock file was found in the database
        * directory. The database is probably unsafe to use,
        * so let's try to boot from a snapshot.
@@ -281,7 +285,11 @@ again:
              "%s: shut down that "
              "process before starting a new one.",
              srv_program_name(srv));
+#if __FreeBSD__
+    } else if (err == EIO && try_snapshot) {
+#else
     } else if (err == ENODATA && try_snapshot) {
+#endif
       /* A stale lock file was found in the database
        * directory. The database is probably unsafe to use,
        * so let's try to boot from a snapshot.

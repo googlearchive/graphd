@@ -15,21 +15,28 @@ package graphd
 
 import (
 	"log/syslog"
+	"net/url"
 )
 
 // The interface to a running graphdb instance.
 type graphd struct {
 	logger *graphdLogger
+	urls   []*url.URL // URLS to connect to.
 }
 
 // New returns a populated graphdb struct pointer.
 // l can be used to specify one's own logger (must implement Print).  A nil Logger interface
 // argument will default to using syslog.
 // logLevel is used to control which log messages are emitted.
-func New(l Logger, logLevel syslog.Priority) *graphd {
+// urlStrs is a list of URLs to which to try to connect.
+func New(l Logger, logLevel syslog.Priority, urlStrs []string) *graphd {
 	g := &graphd{}
 
 	g.initLogger(l, logLevel)
+
+	if err := g.initURLs(urlStrs); err != nil {
+		g.LogFatalf("failed to initialize URLs: %v", err)
+	}
 
 	return g
 }

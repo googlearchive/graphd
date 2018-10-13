@@ -15,6 +15,7 @@ package graphd
 
 import (
 	"log/syslog"
+	"net"
 	"net/url"
 )
 
@@ -22,6 +23,7 @@ import (
 type graphd struct {
 	logger *graphdLogger
 	urls   []*url.URL // URLS to connect to.
+	conn   net.Conn   // Acquired connection.
 }
 
 // New returns a populated graphdb struct pointer.

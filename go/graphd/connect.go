@@ -156,13 +156,14 @@ func (g *graphd) Disconnect() error {
 		return nil
 	}
 
+	// Zero out the connection on function exit.
+	defer func() { g.conn = nil }()
+
 	// Retain address for logs.
 	connectedToAddr := g.conn.RemoteAddr()
 
 	// Try to close the existing connection.
 	err := g.conn.Close()
-	// Zero out the connection.
-	g.conn = nil
 	if err != nil {
 		errStr := fmt.Sprintf("failed to close existing connection, resource leak: %v", err)
 		g.LogErr(errStr)

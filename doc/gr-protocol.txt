@@ -1,0 +1,1455 @@
+GRAPH REPOSITORY PROTOCOL
+=========================
+
+1. INTRO
+
+This is the functional specification of the protocol used to
+access the graph repository. 
+
+The protocol mainly alternates synchronous request from
+client to server with synchronous replies from server to
+client.
+
+	request:
+		read-request
+	      / write-request
+	      / dump-request
+	      / restore-request
+	      / cancel-request
+	      / set-request 
+	      / status-request 
+	      / replica-request 
+	      / replica-write-request 
+	      / sync-request
+
+	reply:
+		read-reply
+	      / write-reply
+	      / dump-reply
+	      / restore-reply
+	      / cancel-reply
+	      / error-reply
+	      / set-reply 
+	      / status-reply 
+	      / replica-reply 
+
+
+The server can also asynchronously notify a client about an
+error that leads to it shutting down, but that's going to be
+seen as an error response to the next command by the client.
+
+(However, smart clients that are able to deal with incoming
+asynchronous notifications from the server can notice that
+early and recover from a server restart without causing a delay
+visible to the user.)
+
+
+1.1 Request Boundaries
+
+Requests and responses are terminated by a newline outside
+of a string literal or a parenthesized list.
+
+1.1.1 Pipelining
+
+Requests can be pipelined.  Unless the application semantics
+demand it, a request submitter does not have to wait to receive
+a reply before submitting the next request.  Nevertheless,
+replies do arrive in the order of requests; to break up
+requests with large responses, use paging.
+
+
+1.1.2 Spanning transport boundaries
+
+Requests can span message boundaries of the underlying
+transport system.  A request or reply can be larger than
+what one "write" call to a TCP connection can dispose
+of without blocking.
+
+The system can impose a maximum request or response size. 
+
+
+2. ERRORS
+
+Any request can result in an error on a couple of different levels.
+The request may have been syntactically incorrect; the user may
+have exceeded their allowance in storage time or space; the repository
+may be shutting down; etc.
+
+Errors are sent to the client in two parts: a machine-readable
+code, and a more detailed human-readable error message filling in
+details of the code.
+
+	error-reply:
+		"error" error-label reply-modifiers string
+
+	error-label:
+	        "BADCURSOR"
+	      / "COST"
+	      / "DATELINE"
+	      / "EMPTY"
+	      / "EXISTS"
+	      / "NOTREPLICA"
+	      / "OUTDATED"
+	      / "READONLY"
+	      / "RESTORE"
+	      / "SEMANTICS"
+	      / "SHUTDOWN"
+	      / "SYNTAX"
+	      / "SYSTEM"
+	      / "TOOBIG"
+	      / "TOOMANY"
+
+	string: <double-quoted string>
+
+Error labels and their meanings:
+
+	badcursor
+		the cursor parameter in a request
+		could not be decoded.
+
+	cost
+		the allowance specified in the cost=".."
+		parameter was exceeded by the request.
+
+	dateline
+		a dateline parameter includes an instance ID
+		that doesn't match that of the database.
+
+	empty
+		a request didn't match anything, or
+		referenced primitives that don't exist.
+
+	exists
+		a write request had "unique" constraints that
+		conflicted with existing primitives.
+
+	notreplica
+		an operation that only makes sense on a 
+		replica server has been attempted on a non-replica server
+
+	readonly
+		access to the server has been set to
+		read-only.
+
+	restore
+		access to the server has been set to
+		restore-only.  The client should retry its
+		request after a few seconds.
+
+	outdated
+		a write() is trying to version a GUID that
+		has already been versioned by another write().
+
+	shutdown
+		the system is being shut down;
+		reconnect after a little while.
+		The client should disconnect and try to
+		reconnect after a few seconds.
+
+	syntax	
+		the request was syntactically wrong.
+
+	system
+		notify the server's system administrator.
+
+	toobig
+		a primitive the server tried to write was too big,
+		or one of the strings involved in the primitive
+		were too long to be encoded.
+
+		Currently, the primitive size limit is about 32k,
+		but details depend on the amount of compression for
+		one primitive.
+
+		Value strings up to 4k, and name strings up to 200
+		bytes, should never present a problem.
+
+	toomany
+		the number of matching primitives exceeded a
+		specified maximum count
+
+3. REQUEST MODIFIERS
+
+Certain parameters can be set on any request.
+They're specified as an optional space-separated list after
+the request's verb.
+
+	request-modifiers:
+	        request-modifier request-modifiers
+	      / request-modifier
+
+	request-modifier:
+		"timeout" "=" seconds
+	      / "id" "=" atom
+	      / "dateline" "=" string
+	      / "asof" "=" ( string / guid / timestamp )
+	      / "cost" "=" string
+	      / "loglevel" "=" ( loglevel / "(" loglevels ")" )
+
+	loglevels: loglevel loglevels / ""  
+
+	loglevel: "verbose" / "debug" / "detail"
+		/ "info" / "fail" / "overview" / "error" / "fatal"
+		/ "tile" / "query" / <other module-specific loglevels>
+
+		; "spew" is an alias for "verbose".
+
+	seconds:
+		+digits
+
+Request modifiers and their meanings:
+
+	asof
+		Read-accesses happening in the course of this
+		request should be executed as if  the database had
+		the indicated dateline.
+
+		The dateline can be specified in three ways:
+
+		 - a string dateline, as returned by the dateline
+		   request modifier, below.
+
+		 - a GUID; the read-access is executed as of the
+		   state just after the primitive had been added to the
+		   system.
+
+		 - a timestamp; the read access is executed as if
+		   it were the time of that timestamp.
+
+		(In order for the last one to work, timestamps of primitives
+		added to the repository later must be greater than timestamps
+		of primitives added earlier.)
+
+	cost
+		Request that the cost of the request be reported,
+		and (optionally) place a limit on the amount of
+		work the request can take.
+
+	dateline
+		Request a dateline result, and demand an up-to-date
+		server reply.
+
+		The "dateline" is a compound "odometer reading" that
+		characterizes how up-to-date a server is.  It is useful
+		in ensuring consistency between "read" and "write"
+		requests in a distributed system.
+
+		A client that writes can ask for a dateline to be
+		returned (by passing in dateline="").  It saves that
+		dateline, and then reuses it in a "read" request that
+		follows the "write".  Even if the "read" request hits
+		a server other than the one that received the "write",
+		the dateline has enough information to allow the server
+		to judge whether it is "behind", and to cause it catch up
+		if needed.
+
+	id
+		The request can be cancelled by executing
+		a cancel request with the same id.  Its response
+		will have the same "id=" modifier that was sent
+		in the request.
+
+	loglevel
+		While processing the request, increase the
+		server loglevel to the specified levels.  The keywords
+		for the loglevels are the same as for the  
+		server "log-level" configuration parameter.
+
+	timeout
+		If the request ends up taking longer than 
+		<seconds>, the system makes a best effort
+		to return a timeout error and partial results.
+
+
+3.1 Discussion
+
+*       User/Account/Security Identity could be another request modifier.
+	"Do this as X", with a view towards having different quota
+	and time constraints apply to different users.
+
+	(I don't think logging in as a person-user is worth it,
+	because application servers are going to multiplex sessions;
+	I'd rather do the hard authentication between application
+	server and client, and just authenticate the application server
+	as trusted.  But that doesn't mean that different requests
+	can't have different quality of service.)
+
+
+4. REPLY MODIFIERS
+
+Certain parameters can be set on any reply.
+They're specified as an optional comma-separated list after
+the reply's data.
+
+	reply-modifiers:
+		reply-modifier
+	      / reply-modifier reply-modifiers
+
+	reply-modifier:
+		"redirect" "=" url
+	      / "timeout"
+	      / "id" "=" atom
+	      / "cost" "=" string
+	      / "dateline" "=" string
+
+Reply modifiers and their meanings:
+
+	redirect
+		The server says: for this kind of query,
+		you should really connect to the other server
+		at "url"
+
+	dateline
+		The value of this modifier can be handed to a server
+		to request that it be at least this up-to-date before
+		attempting to fill a request.
+
+	timeout
+		The request timed out.  The results may or
+		may not be partial.
+
+	id
+		The request that this is a reply to was tagged
+		with this id.
+
+		Currently, replies correspond synchronously
+		to requests.  (They come back in the order the
+		requests were received.)  If we ever introduce
+		an asynchronous modifier that allows replies
+		to overtake each other,  this will be needed.
+
+	cost
+		The true cost of the request.  The string contains
+		a space-separated list of name-value pairs.
+
+		tu 	time/user, number of milliseconds graphd spent
+			executing in user mode while computing the
+			answer to this request.
+
+		ts 	time/system, number of milliseconds graphd
+			spent executing in system mode while computing
+			the answer to this requests. "Executing in
+			system mode" almost always means "reading
+			a lot of data from disk".
+
+		tr 	time/real, number of milliseconds graphd spent
+			executing to answer this query in general. This
+			number will get larger on a system that is busy
+			with other things, even if graphd isn't involved
+			in them.
+
+		te	time/end-to-end, number of milliseconds from
+			parsing the quest to formatting its result.
+			Unlike "tr", "te" includes time the request was
+			suspended while the server was working on completely
+			different requests.  In an idle server, "tr" is
+			very close to "te".  In a busy server, "tr" should
+			stay the same, and "te" should go up.
+
+		pr 	page reclaims, a benevolent form of page fault
+			that doesn't actually do any work because the
+			page is still in the local cache.
+
+		pf 	page faults, the thing we're trying to minimize.
+			Higher pf will usually be accompanied by a higher ts.
+	
+		dw 	primitive data writes. Usually, these will be what
+			you expect, except for queries that create implicit
+			type links and type system fragments.
+
+		dr 	primitive data reads - how many single primitive
+			structs were read from disk (for example, as part
+			of dismissing them as candiates for a qualified
+			search).
+
+		in 	index size reads - how many indices were looked up
+			with their starting address and size.
+
+		ir 	index element reads - how many times a single id
+			was read from an index.
+
+		iw 	index element write - how many times an element 
+			was added to an index.
+
+		va 	value allocations - how many times a (possibly
+			temporary or transient) result data structure
+			was allocated
+
+		ma	memory allocations (in bytes) - how many bytes
+			are allocated at the end of the request
+
+		mm	memory maximum (in bytes) - the largest number
+			of bytes allocated for the request at any one
+			time
+
+		mt	memory total (in bytes) - all allocations added
+			up, disregarding calls to free or implied frees
+			through realloc.
+
+		fa	fragment allocations - how many chunks of memory
+			are allocated at the end of the request.  One
+			call to malloc() creates one fragment.
+
+		fm	fragment maximum - how many chunks of memory
+			are allocated at most at any one time.
+
+		ft	fragment total - how many calls were made to
+			allocate request-specific memory, disregarding
+			calls to free it up?
+
+		
+4.1 Discussion
+
+*	Maybe timeouts could be handled as a form of ad-hoc paging,
+	where the repository gets to invent a cursor and sorting
+	order.  Then we can just handle it with the paging
+	requests.  But it's hairy.
+
+*       Another request modifier could be the amount of storage
+	used by the request.
+
+5. READ
+
+	read-request:
+		"read" [request-modifiers] template
+
+For the template-grammar,see cvs:graph/doc/gr-template.txt
+
+	read-reply:
+		"ok" [reply-modifiers] list-tuple
+
+The data returned by the list request is a list of lists and scalars.
+The meaning of the list elements depends on the result= clause in
+the template request; see cvs:graph/doc/gr-template.txt, section 14.1.
+
+	list-tuple:
+		"(" [tuples] ")"
+
+	tuples:
+		tuple tuples
+	      / tuple
+
+	tuple:	
+		literal-part
+
+6. WRITE
+
+The write request is similar to the read request, with
+certain restrictions and changes to the template.
+
+	write-request:
+		"write" [request-modifiers] literal-expression
+
+GUIDs of new primitives are returned as a tuple.
+
+	write-reply:
+		"ok" [reply-modifiers] tuple
+
+6.1 Write templates
+
+The syntax used to write is a closely restricted subset of the
+syntax used to read.
+
+	literal-expression:
+		"(" [ literal-parts ] ")"
+
+Write templates do not have instructions associated with them.
+
+	literal-parts:
+                  literal-parts  literal-part
+                / literal-part
+
+	literal-part:
+                  meta-literal
+                / guid-literal
+                / timestamp-literal
+                / valuetype-literal
+                / string-literal
+                / numeric-literal	; not yet implemented
+                / primitive-literal
+                / linkage-literal
+                / live-literal
+                / archival-literal
+                / unique-literal
+                / key-literal
+                / comparator-literal
+		/ anchor-modifier
+		/ result-modifier
+
+6.1.1 Meta Literal
+
+Like meta-constraints (see gr-template.txt section 2), but
+without "any".
+
+	meta-literal:
+                  "->"
+                / "<-"
+                / "node"
+
+The default meta literal is "node"; it is meaningless
+and might as well be omitted.
+
+6.1.2 Valuetype Literal
+
+When writing, valuetypes and datatypes are completely synonymous.
+("Datatype" is the old, symbolic notation; valuetype is the new,
+numeric notation.)
+
+Both accept small integers in the range 1..255 and the symbolic
+datatype names null(1), string(2), integer(3), float(4), guid(5),
+timestamp(6), url(7), bytestring(8), boolean(9).
+
+(It is a good idea to switch to using the numbers, rather than the
+symbolic names, but both work.)
+
+	valuetype-literal:
+		  "valuetype" "=" valuetype
+		/ "datatype"  "=" valuetype
+
+	valuetype:  "string
+                 / "integer"
+                 / "float"
+                 / "timestamp"
+                 / "url"
+                 / "guid"
+                 / "bytestring"
+                 / "boolean"
+                 / "null"
+		 / <a small integer between 1 and 255.>
+
+If neither a value nor a valuetype is specified, the valuetype defaults to
+"null", or 1.  If a value is specified in an insert request, but no valuetype,
+the valuetype defaults to "string", or 2.
+
+Other than that, value types do not influence the behavior of graphd with
+respect to the values in any way.  They are not evaluated when comparing
+values or matching them.  For all practical purposes, they are simply a
+small integer that is stored in the primitive for arbitrary use by the
+application.
+
+
+6.1.3 GUID Literal
+
+	guid-literal:
+		"guid" "=" guid
+	      / "guid" "~=" guid
+
+Written like a guid-constraint, i.e. "guid = 123.."
+or "guid ~= 123.."
+
+If a GUID constraint is present in a "write" request,
+the newly written primitive is intended to version, that is,
+to implicitly delete and take the place of, another primitive.
+
+If the operator is =, the most recent version of the primitive
+must be the one with the specified GUID.  If the operator is
+~=, the specified GUID may have been replaced by another primitive
+in the mean time (and that one, in turn, by others); whatever the
+most recent primitive in this lineage is is versioned.
+
+(In other words, = is pessimistic, ~= is opportunistic,
+about race conditions.  If someone else has gotten in in the
+meantime and versioned things, = fails, while ~= will just
+quietly do the right thing.  If the right thing happens to
+be to go ahead with the write.)
+
+If no GUID is specified, the system generates a new GUID.
+The new GUID will not match any other existing GUID when
+compared with ~= or =.
+
+6.1.4 Timestamp Literal
+
+Simlar to timestamp-constraints, but only real timestamps
+are allowed as literals (not the "generational" operators
+"newest" or "oldest").  The only possible operator is "=".
+
+        timestamp-literal:
+                  "timestamp" "=" timestamp
+        timestamp:
+             y?yyyy ["-" mm ["-" dd ["T" hh [":" mm [":" ss ["." +n ]]]]]] ["Z"]
+
+Unspecified parts of the timestamp are set to the minimum
+allowed by the type. (I.e. 1 for months and days,
+0 for hours, minutes, seconds.)
+
+If no timestamp literal is supplied for a tuple, it 
+defaults to the current time.
+
+The timezone is optional; if it is supplied, it must be "Z",
+standing for UTC.
+
+
+6.1.5 String Literal
+
+Similar to string-constraints, but without matching.
+The specified string is simply assigned.
+
+	string-literal:
+		  literal
+		/ stringexpression "=" literal
+
+        stringexpression:
+                  "type"
+                / "name"
+                / "value"
+
+If there's no stringexpression= prefix, it defaults to "type=".
+(In other words, (person) creates a new node of type person.)
+
+If an "url" string literal is specified, the datatype is
+implicitly forced to "url".  It is an error to both have a
+"url" string literal and a datatype other than "url".
+
+
+6.1.6 Primitive Literal
+
+Like primitive-constraints, primitive-literals recursively
+specify groups of links or nodes that are implicitly
+connected to their containing expression.
+
+        primitive-literal:
+		  "(" "<-" linkage [literal-parts] ")"
+		/ [ linkage "->" ] "(" [literal-parts] ")"
+
+	linkage:  "left"
+		/ "right"
+		/ "scope"
+		/ "typeguid"
+
+The linkage-> or <-linkage specifies how the containing and the
+contained primitive are connected.  It can be omitted once if the
+outer primitive is tagged with "->" or "<-" (which implies a
+form of attachment between outer and inner primitive.)
+
+
+6.1.7 Flag Literal
+
+Flag literals concern flags set for the primitive. 
+There are two flags, "archival" and "live".  Both are
+"true" by default.
+
+	live-literal:
+	        "live" "=" bool
+
+	archival-literal:
+                "archival" "=" bool
+
+	bool:	"true" / "false"
+
+By default, entries are considered archive-worthy.
+By default, they're also intended as data additions to
+the database state, not as markers for deleted records.
+
+
+6.1.8 Linkage Literal
+
+This is similar to 6.1.6 Primitive Literal, but only connects
+the primitive to an existing other primitive with a given GUID,
+without actually creating that primitive.
+
+	linkage-literal:
+		  linkage "=" guid
+		/ linkage "~=" guid
+
+It is an error to specify a left (source) guid for a "<-" link
+that encloses a primitive or a "->" link that is not at the outermost
+level.  It is an error to specify a right (destination) guid for
+a "<-" link that isn't at the toplevel, or for a "->" link that
+contains other primitives.
+
+
+6.1.9 Uniqueness Literal
+
+The uniqueness literal places a restrictions on the write
+expression that contains it.  If the part of a write expression
+that is tagged with a "unique=" modifier already exists at the
+time the write request is executed, the write request fails.
+
+	unique-literal:
+               "unique" "=" "(" [unique-instruction-items] ")"
+	     / "unique" "=" unique-instruction-item
+
+      	unique-instruction-items:
+               unique-instruction-item unique-instruction-items
+             / unique-instruction-item
+
+        unique-instruction-item:
+               "name"
+             / "typeguid"
+             / "datatype"
+             / "value"
+             / "left"
+             / "right"
+             / "scope"
+             / "timestamp"
+
+Note that in spite of similar grammar to the "result" instruction,
+uniqueness checks are limited to a smaller set of features.
+
+The unique modifier has two effects: it turns on the existence-testing as
+a precondition for the write to succeed; and it specifies what it means
+for something to "already exist" - do the type and name have to match?
+Type, name, and value?  Just the value?
+
+6.1.9.1 Use of unique to construct namespaces. 
+
+The normal use of unique is in the construction of namespaces.
+Each namespace has a well-known headnode.
+Unique labels are implemented as links between the named object
+and the namespace headnode.  When inserting the links, they are
+inserted with a unique qualifier that includes the namespace and
+the value; expressing that the value has to be unique within
+the namespace.
+
+6.1.9.2 Unique clustering
+
+Uniqueness expressions can stretch across multiple primitives.
+Any group of primitives that
+ (a) are connected to each other,
+ (b) are all tagged with "unique" in some way,
+ (c) and whose unique tags include the links between them
+are one "unique cluster" that can independently match or fail.
+
+6.1.9.2.1 Example: A cluster with two primitives
+
+The command 
+
+	write (name="Pat" unique=right right->(name="Kim" unique=name))
+
+contains a single unique cluster, made up of the nodes tagged Pat and Kim.
+Pat and Kim both have unique tags, and the link between them is part
+of Pat's unique set.
+
+6.1.9.2.2 Example: Separate clusters
+
+If I swap Pat's "unique" feature set from "right" to "name"
+
+	write (name="Pat" unique=name right->(name="Kim" unique=name))
+		
+I get two clusters.  Pat and Kim must both be unique, but
+their connection - Pat's right - isn't part of Pat's unique set.
+
+6.1.9.2.3 Effects of clustering on the outcome
+
+Given the database created by
+		
+	write (name="Pat")
+	write (name="Kim")
+
+the write in example 6.1.9.2.1 succeeds,  but the one in 6.1.9.2.2 fails.
+The first write was matching a complete cluster of Pat->Kim; the second
+write was matching Pat and Kim individually, and would then have connected
+the results.
+
+6.1.10 Key Literal
+
+Key literals, used only in write requests, help roll a familiar sequence
+of operations into one: a "read" to see if something is already there,
+a versioning of the old or insertion of a new value with a "unique"
+modifier, and a final "read" to get the new GUIDs of the destination.
+
+	key-literal:
+               "key" "=" "(" [key-instruction-items] ")"
+	     / "key" "=" key-instruction-item
+
+      	key-instruction-items:
+               key-instruction-item key-instruction-items
+             / key-instruction-item
+
+        key-instruction-item:
+               "name"
+             / "typeguid"
+             / "datatype"
+             / "value"
+             / "left"
+             / "right"
+             / "scope"
+             / "timestamp"
+
+The key literal designates those parts of a template that
+identify a location in the graph (an "lvalue"); the remainder
+of the template describes the state that the caller wants
+that location to have, with the understanding that insertion,
+versioning, and partial addition can be used to bring about
+that state.
+
+If there's no primitive that matches the "key" constraint,
+the "write" call inserts the primitive, just as a write call
+without key constraint would.
+
+If the primitive exists with all the values just as described in
+the "write" call, the call returns the GUID of the existing
+primitive.
+
+Finally, if the key fields match, but some of the rest don't,
+the "write" call makes the minimal set of versioning changes and
+additions needed to bring about the desired state, and returns
+the set of GUIDs from the finished mix of old, versioned, and
+new.
+
+
+6.1.10.1 Key clusters
+
+Key primitives cluster just like unique primitives.  Each cluster
+contains the largest possible connected group of primitives that
+each have keys and are connected with links that are covered by
+keys.  If a read query built from the cluster parts matches,
+the cluster matches, and will either version or just reuse
+the primitive network.  (Each member of the key cluster versions 
+its own corresponding member of the matched set, if needed.)
+
+6.1.10.2 Pointed-to unkeyed expression clusters
+
+If a keyed primitive points to an unkeyed primitive, and that
+unkeyed primitive and those it points to already exist in the
+requested form in the database, the unkeyed primitive is not
+created over again if the pointing, keyed, primitive exists.
+
+6.1.10.3 Keys and ~= don't mix
+
+Because keys already imply versioning of a previous match, keys
+cannot occur in  graphd constraints that also contain ~= GUID
+literals.
+
+6.1.11 Comparator Literal
+
+The comparator literal influences the way unique- or 
+key comparators compare values while checking for existence
+of a value.  Its syntax is exactly the same as the comparator
+constraint syntax.
+
+	comparator-literal:
+		comparator-constraint
+
+See gr-template.txt for details.
+
+6.1.12 Anchor Modifier
+
+anchor-modifier:
+	"anchor"
+
+Any constraint or subtree labelled as an "anchor" must occur
+exactly once in the database.  If it does not exist, or if it
+exists more than once, the call fails with error code EMPTY.
+
+An explicitly tagged anchor implicitly includes any subconstraint
+below it.
+
+An explicitly or implicitly tagged anchor primitive also implicitly
+taggs any other primitive it points to, but not those primitives'
+subtrees (unless they are also tagged explicitly.)
+
+For example, in
+
+      write (value="a"
+         	(<-left value="b" anchor)
+		(<-left value="c")
+		(<-left value="d"))
+
+the anchor-derived read query
+
+     read (value="a"
+               (<-left value="b"))
+
+must match exactly one record.  The GUIDs it returns are
+connected to the newly written records (<- left value="c")
+and (<-left value="d").  A total of two primitives are written
+by the example write request.
+
+
+6.1.13 Result Modifier
+
+result-modifier:
+	"result" "=" result-pattern
+
+result-pattern:
+	"(" result-patterns ")"
+      / "guid"
+      / "none"
+      / "literal" "=" string
+      / "contents"
+
+result-patterns:
+	 result-patterns result-pattern
+       / ""
+
+The result pattern possible in a "write" request is a smaller version
+of that possible with a "read" request.  Atomic patterns mean the
+same they mean in a read context; unlike in read, the parentheses are
+returned exactly as written, with no duplication or expansion.
+
+The default result pattern for a write constraint is "(guid contents)".
+
+
+7. CANCEL
+
+	cancel-request:
+		"cancel" request-modifiers
+
+A "cancel" request is an announcement from the client that
+it will not parse (i.e., throw away, skip) the results.
+
+It gives a server that is in the middle of calculating a reply
+leeway to stop calculating it and just send a perfunctory
+"ok" or "error" response, and a server that is in the middle
+of formatting the response to a reply leeway to stop formatting
+it, close the string it is currently formatting (if any), and
+terminate the reply with a single newline.  The reply does
+not have to be syntactically correct or a complete list.
+
+* Not yet implemented.
+
+8. CONNECTION ESTABLISHMENT
+
+When a client connects to the server, there's a brief handshake
+period in which they both agree on their respective identities,
+transport layer protection, and protocol versions.
+
+[Needs filling in.] 
+
+9. STATUS
+
+A "status" request asks various modules in the graphd
+interior for information about their status and operation.
+This is intended as a testing and monitoring tool; the
+operations should be fast enough to not significantly
+affect server speed or functioning.
+
+	status-request:
+		"status" [request-modifiers] "(" status-request-items ")"
+
+	status-request-items:
+		  status-request-item status-request-items
+		/ ''
+
+	status-request-item:
+		  "access"
+		/ "connection" / "connection" / "conn"
+		/ "core"
+		/ "database" / "db"
+		/ "database-compression-id"
+		/ "database-insertion-id"
+		/ "diary"
+		/ "import"
+		/ "loglevel"
+		/ "memory" / "mem"
+		/ "replica" / "rep"
+		/ "sync"
+		/ "transactional"
+		/ "version"
+
+	status-reply:
+		"ok" [reply-modifiers] "(" status-reply-items ")"
+
+	status-reply-items:
+		  status-reply-item status-reply-items
+		/ ''
+
+The items in the connection reply occur in the order of the
+corresponding keywords in the request.
+
+	status-reply-item:
+		  status-access-reply
+		/ status-connection-reply
+		/ status-core-reply
+		/ status-database-reply
+		/ status-database-compression-id-reply
+		/ status-database-insertion-id-reply
+		/ status-diary-reply
+		/ status-import-reply
+		/ status-loglevel-reply
+		/ status-memory-reply
+		/ status-replica-reply
+		/ status-sync-reply
+		/ status-transactional-reply
+		/ status-version-reply
+
+
+9.1 Connection Reply
+
+The connection reply is a parenthesized list of per-connection 
+data, one for each connection (or "session") to the server.
+
+	status-connection_reply:
+		"(" status-connection-reply-items ")"
+
+	status-connection-reply-items:
+		  status-connection-reply-item status-connection-reply-items
+		/ ""
+
+	status-connection-reply-item:
+		"(" 
+		  <"> <ip-address> ":" <port> <">	; the peer's IP address
+		  <"> ("status" / "read" / "write" / "connect") <">
+							; the most recent action
+		  <"> ("RUN" / "I/O" / "MEM") <">; what is it waiting for?
+		  timestamp			; start time, in GMT
+		  timestamp			; most recent action, in GMT
+		  number			; bytes received
+		  number			; bytes sent
+		  number			; requests received
+		  number			; requests sent
+		  number			; milliseconds computed
+		  string			; the full command
+		  number			; session-id
+		  number			; request-id
+		 ")"
+
+
+9.2 Database Reply
+
+The database reply is a parenthesized list of name/value pairs.
+For their meaning, consult the gstatus.1 manual page.
+
+	status-database-reply:
+		"(" status-database-reply-items ")"
+
+	status-database-reply-items:
+		  status-database-reply-item status-database-reply-items
+		/ ""
+
+	status-database-reply-item:
+		"(" status-database-name status-database-value ")"
+
+	status-database-name:
+		string
+
+	status-database-value:
+		string
+
+9.3 Memory Reply
+
+The memory reply is just a list of strings; the strings are
+produced by the memory trace module of graphd, if graphd is
+started with the "-t" option.  Otherwise, the memory reply is null.
+
+	status-memory-reply:
+		  null
+		/ "(" status-memory-reply-items ")"
+
+	status-memory-reply-items:
+		  status-memory-reply-items status-memory-reply-item
+		/ ""
+
+	status-memory-reply-item:
+		 string
+
+The strings internally have a form dictated by the memory trace
+module (cm_trace()); typically, something like
+	
+	0x5cf7d8[4168], allocated "srv-buffer-pool.c", line 243
+
+
+9.4 Access Reply
+
+The access reply lists the current global server
+access level, as set with the "set" command.
+
+	status-access-reply:
+		access-option		; see section 12, "Set" 
+
+9.5 Loglevel Reply
+
+The loglevel reply lists, as a parenthesized list, the
+loglevels and  -facilities currently in effect.
+
+Note that if the status reply comes from a session that
+has a session specific loglevel, that loglevel, not the 
+server-global level, will be returned.
+	
+	status-loglevel-reply:
+		"(" loglevels ")"
+
+
+9.6 Core Reply
+
+A boolean value, indicating whether the server is
+currently inclined to dump core on programmer error or not.
+
+	status-core-reply:
+		bool
+
+The value can be changed with the "set" command.
+
+9.7 Sync Reply
+
+A boolean value, indicating whether the server is
+currently guaranteeing that any data has been saved to permanent
+storage when a command returns.
+
+	status-sync-reply:
+		bool
+
+The value can be changed with the "set" command.
+
+9.8 Cost Reply
+
+A string value.  The string is a (possibly empty) series of
+space-separated name=value pairs.  The names are the same
+as in the "cost" request parameter; where present, they define
+global limits for any request in the system.
+
+	status-cost-reply:
+		string
+
+The value can be changed with the "set" command.
+
+9.9 Version Reply
+
+A string value.  The string is a the "build version" of graphd.
+The detailed syntax depends on the build system; currently,
+it is "gd/trunk/graph/src:8439:8454M", that is, the significant
+parts of the svn  URL, followed by the svnversion output for the
+graphd build root.
+
+9.10 Replica Reply
+
+	status-replica-reply:
+		"("
+			 "(" master-address master-peer ")"
+			 "(" write-address write-peer ")"
+			 "(" replica-peer-list ")"
+ ")"
+
+	master-address:
+		"address url"
+		/ ""
+
+	master-peer:
+		"peer address"
+		/ ""
+
+	write-address:
+		"address url"
+		/ ""
+
+	write-peer:
+		"peer address"
+		/ ""
+
+	replica-peer-list:
+		"peer address" replica-peer-list
+		/ ""
+
+Any empty peer address string indicates that the corresponding
+connection does not exist.  An empty address url string indicates
+that the corresponding address has not been configured.
+
+9.11 Transactional Reply
+
+A boolean value, indicating whether the server is running in a
+way that, if sync is enabled, will guarantee its ability to recover
+from a crash with a consistent database.  This is turned on by
+default; it can be turned off for replica that can easily recover
+from a snapshot of a master graph, and don't need their own
+database to be consistent, but would benefit from the faster speed
+that turning this guarantee off allows.
+
+	status-transactional-reply:
+		bool
+
+The value is read-only and can only be configured in a configuration
+file, not changed at runtime.
+
+9.12 Import Reply
+
+An import reply consists of two lists.
+
+	status-import-reply:
+		"("
+			 "(" import-guids ")"
+			 "(" import-pairs ")"
+                 ")"
+
+The first is a list of GUIDs, one for each external database ID; for each
+database ID, the GUID is the lowest GUID not yet stored on the importing
+server.  In other words, the serial number part of each GUID is the number
+of existing primitives for that database.
+
+
+	import-guids:
+		  import-guids import-guid
+		/ ""
+
+	import-guid:
+		  guid
+
+The second list holds pairs of addresses, one pair for each import connection;
+the first address of each pair is the remote server that this import is from;
+the second address is the local side of the connection.
+
+	import-pairs:
+		  import-pairs import-pair
+		/ ""
+
+	import-pair:
+		  "(" remote-address local-address ")"
+
+	remote-address:
+		ipaddress
+
+	local-address:
+		ipaddress
+
+	ipaddress:
+		string	; usually of the form "IPADDR:PORT"
+
+9.12 Database Insertion ID Reply
+
+This is the database ID (in decimal) assigned to newly minted GUIDs
+on a server.
+
+	status-database-insertion-id-reply:
+		number
+
+9.13 Database Compression ID Reply
+
+This is the database ID (in decimal) against GUIDs are compressed
+when storing them in the database.
+
+	status-database-compression-id-reply:
+		number
+
+10. DUMP
+
+A dump request saves contents from the local database in a
+textual form, fit for use with a later "restore" command.
+
+	dump-request:
+		"dump" [request-modifiers] "(" dump-constraints ")"
+
+	dump-constraints:
+		  dump-constraint dump-constraints
+		/ ""
+
+	dump-constraint:
+		  "start" "=" startoffset
+		/ "end" "=" endoffset
+		/ "pagesize" "=" number
+
+	startoffset:
+		  number
+
+	endoffset:
+		  number
+
+	dump-reply:
+		  "ok" [reply-modifiers] database-state
+		  
+	database-state:
+		"(" dump-version startoffset endoffset dump-tuples ")"
+
+	dump-version:	<"> "6" <">	; the string "6".
+
+	dump-tuples:
+		  dump-tuple dump-tuples
+		/  ""
+
+	dump-tuple:
+		  error-tuple
+		/ record-tuple
+
+	error-tuple:
+		"(" string ")"
+
+	record-tuple:
+		"(" 	guid
+			("null" / guid)		; typeguid
+			("null" / string)	; name
+			datatype
+			("null" / string)	; value
+			("0" / guid)		; scope
+			bool			; live
+			bool			; archival
+			bool			; transaction-start
+			timestamp
+			("0" / guid)		; left
+			("0" / guid)		; right
+			("0" / guid)		; previous
+		")"
+
+11. RESTORE
+
+The restore request feeds state generated by the dump request
+back into the database.
+
+If a restore request starts at startstate of zero, the existing
+database state in the server is destroyed prior to the restore.
+If a restore request doesn't start at zero, its startstate must
+be less than or equal to the highest endstate of the server into
+which the data is being restored.  If the start state is less
+the highest endstate (server's horizon) then the restored
+values will be compared to what is in the database and the
+restore will fail if they are different.  This allows one to
+retry a failed incremental restore.
+
+(In this context, "zero" is the first startstate returned
+by a dump command - it doesn't matter how it is encoded.)
+
+	restore-request:
+		"restore" [request-modifiers] database-state
+		; for details of the database-state, see the "dump"
+		; comand in section 10.
+
+	restore-reply:
+		"ok" [reply-modifiers]
+
+
+12. SET
+
+Set requests control operations of the database at runtime.
+
+	set-request:
+		"set" [request-modifiers] "(" set-options ")"
+
+	set-reply:
+		"ok" [reply-modifiers]
+
+	set-options:
+		set-option set-options
+	      / ""
+
+	set-option:
+		"access" "=" access-option
+	      / "loglevel" "=" loglevel-option
+	      / "sync" "=" sync-option
+	      / "core" "=" core-option
+
+Setting the "access" of a server causes requests that don't
+fit in with the access model to be rejected.
+
+	access-option:
+		"restore"	; reject write, read
+	      / "replica"	; operate as a replica 
+	      / "replica-sync"  ; read-only replica
+	      / "read-only"	; reject write
+	      / "read-write"	; allow all
+	      / "shutdown"	; reject all
+
+When setting a loglevel, the command accepts either a single
+loglevel or a parenthesized list of loglevels.  The server
+loglevel is set to the union of all the listed loglevels.
+
+	loglevel-option:
+		"(" loglevel-option-list ")"
+	      / loglevel-option-item
+
+	loglevel-option-list:
+		loglevel-option-list loglevel-option-item
+	      / ""
+
+	loglevel-option-item:
+	      / loglevel
+	      / loglevel-option-session
+
+Mixed in with the loglevels can be at most one session
+displayname, as listed e.g. in the response to status (conn).
+
+	loglevel-option-session:
+		ip-address ":" port	; identifying a session
+
+If there is a session displayname present, the debuglevel set
+is not that of the global server system, but only of that
+session.  In other words, while that session serves its requests,
+the loglevel is temporarily set to the level indicated.
+
+To remove the special session loglevel, run a set loglevel command
+with only a session level, no specific loglevel.
+
+The "sync" option is a server-wide value that controls whether
+an "ok" response from the server immediately followed by a
+server shutdown or crash still guarantees that the data can be
+recovered from disk.
+
+	sync-option:
+		"true"		; make sure values hit disk (default) 
+	      / "false"		; no, just store as fast as you can
+
+
+The "core" option controls whether the server will dump core when
+crashing.
+
+	core-option:
+		"true"		; yes, drop a core file if you can
+	      / "false"		; no, just crash.
+
+13. REPLICA, REPLICA-WRITE
+
+A replica request starts the replication protocol.  The request
+is sent by the replication client (a replica database) to the
+the replication server (the master database).
+
+	replica-request:
+		"replica" [request-modifiers] "(" replica-options ")"
+
+	replica-options:
+		replica-option replica-options
+	      / ""
+
+	replica-option:
+		"version" "=" version-option
+	      / "start-id" "=" start-id-option
+	      / "check-master"
+
+	version-option:
+		"1"		; Replication Protocol version 1
+
+	start-id-option:
+		number          ; the id of the first primitive to send
+
+A replica response consists of a protocol version and the
+url of the write-master:
+
+	replica-response:
+		"ok" [response-modifiers]
+			"(" "version" "=" version-option "master" "=" url ")"
+	      / error-reply
+
+After a positive replica-request/response, the replication server will
+emit replica-write commands.
+
+	replica-write-request:
+		"replica-write" [request-modifiers] "(" dump-tuples ")"
+
+Each replica write command contains the primitives written by one
+or more write commands.  The first primitive in the dump tuples
+will always have the TXSTART bit set.
+
+13.1 Protocol Versioning
+
+The general principle is: "client makes it right."
+
+The client sends the server the highest protocol version it is capable
+of understanding.  The server responds with the protocol version it will
+use, or an error if it determines that it cannot talk with the client.
+
+13.2 Connection
+
+Either side of the replication protocol may drop the connection at
+any time.  If the replication connection is dropped, the client is
+expected to try to re-establish it at "sensible"intervals.
+
+13.3 Write Master
+
+Replica databases use the master url returned in the replica response
+to forward write requests on to the master graphd.  If the connection
+between a replica and the master graphd fails, the replica is expected
+to drop the replication connection and re-establish it with the
+check-master option.
+
+14. SYNC
+
+A "sync" request performs a database checkpoint and returns the new horizon of
+the database:
+
+	sync-request:
+		"sync" "(" ")"
+	
+	sync-response:
+		"ok" horizon
+
+When coupled with the "replica-sync" access mode, the "sync" command produces a
+stable disk database that can be easily copied to a backup store.
+
+If multiple "sync" commands are issued simultaneously, they will be executed
+serially, each possibly returning a different horizon.

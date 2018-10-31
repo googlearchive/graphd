@@ -1,0 +1,74 @@
+GRAPHD REPLICATION
+==================
+
+1. Creating a Replica Database
+
+To create a replica, one must specify the location of the
+database to be replicated in the replica section of a config
+file, for example:
+
+   ...
+   replica
+   {
+      host myhost
+      port 8100
+   }
+   ....
+
+When started with this config file, graphd will try and establish
+a replication connection with the graphd listening on port 8100
+at myhost.
+
+The replication conection will first restore the replica from
+the master.  Once the restore has caught up, new primitives
+will be sent to the replica as they are committed on the master.
+Primitives will be sent in transactional chunks corresponding
+to the original writes.
+
+If you have a copy of the master's database files, it is faster
+to use these to "seed" the replica rather than to create an
+empty replica which will restore itself from the master.
+
+You may use
+
+   gstatus -r
+
+to check the replication status of a graph.  At the protocol
+level, "status (rep)", provides the same information.  For
+example:
+
+status (rep)
+ok ((("127.0.0.1:1234" "tcp://localhost:1234") ("" "tcp://localhost:8100") ()))
+
+The result indicates that we are connected to the
+replica server at 127.0.0.1:1234, which we found
+at the address tcp://localhost:1234.  We have no
+connection to the write master, but the address to
+use when we need one is tcp://localhost:8100.
+
+The last empty list indicates that we are not serving
+as master to any replicas.
+
+2. Writing to a Replica
+
+When a replica connects to a master, the master returns
+the address of the "write master," that is, the graphd
+to forward write commands to.  Subsequent write commands
+to the replica are transparently forwarded to the write master.
+
+3. Access Modes
+
+Replication is an access mode.  If you set the access mode
+to "replica" graphd attempts to connect to the master
+specified in the configuration file.  If it was already
+in replica mode, it will drop the current connection
+to both the write master and the replica server and
+attempt to reconnect.
+
+A common transition would be to move graphd from mode
+"replica" to mode "read-only."
+
+4. Failures
+
+A graphd in replica mode will attempt to connect to the
+specified master every ten seconds until it succeeds.
